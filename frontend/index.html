@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gala Final Voting - Cast Your Vote</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>The Gala Final Voting</h1>
+                <p class="subtitle">Cast your vote for your favorite contestant</p>
+                <div class="header-decoration"></div>
+            </div>
+        </header>
+
+        <div class="voting-section">
+            <div class="ticket-input">
+                <label for="ticketCode">Enter Your Ticket Code:</label>
+                <input type="text" id="ticketCode" placeholder="e.g., ABC12345" maxlength="20">
+                <button id="validateTicket" class="btn btn-secondary">Validate Ticket</button>
+            </div>
+
+            <div id="ticketStatus" class="ticket-status hidden"></div>
+
+            <div id="contestantSelection" class="contestant-selection hidden">
+                <h3>Select Your Contestant:</h3>
+                <div id="contestantsList" class="contestants-grid"></div>
+                
+                <div class="vote-button-container">
+                    <button id="submitVote" class="btn btn-primary" disabled>Submit Vote</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="status-bar">
+            <div id="votingStatus" class="voting-status">
+                <span id="statusText">Checking voting status...</span>
+                <span id="currentTime"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎉 Vote Submitted Successfully!</h3>
+            </div>
+            <div class="modal-body">
+                <p>Your vote for <strong id="votedContestant"></strong> has been recorded.</p>
+                <p>Thank you for participating!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header error">
+                <h3>❌ Error</h3>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.1"></script>
+</body>
+</html>

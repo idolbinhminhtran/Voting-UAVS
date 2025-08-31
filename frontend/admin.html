@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - The Gala Final Voting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Admin-specific enhancements */
+        .admin-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 8px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow-x: auto;
+        }
+        
+        .admin-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .admin-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .admin-tab:hover::before {
+            left: 100%;
+        }
+        
+        .admin-tab:hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .admin-tab.active {
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .admin-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Enhanced header */
+        header {
+            margin-bottom: 40px;
+        }
+        
+        .admin-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: admin-glow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
+        }
+        
+        @keyframes admin-glow {
+            from {
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
+            }
+            to {
+                transform: scale(1.05) rotate(5deg);
+                filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.8));
+            }
+        }
+        
+        header h1 {
+            font-size: 3.2em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+        
+        /* Enhanced stat cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Enhanced forms */
+        .contestant-form, .voting-status-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .contestant-form h3, .voting-status-card h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 1.05em;
+            letter-spacing: 0.3px;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf4;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+        
+        /* Enhanced danger zone */
+        .danger-zone {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(255, 193, 7, 0.1));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(220, 53, 69, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .danger-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #dc3545);
+            animation: danger-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes danger-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .danger-zone h3 {
+            color: #dc3545;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .danger-zone p {
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .danger-zone .btn {
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        
+        /* Ticket actions */
+        .ticket-actions {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .ticket-stats {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Section headers */
+        .admin-content h2 {
+            color: white;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .status-open {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-closed {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .admin-tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            header h1 {
+                font-size: 2.5em;
+            }
+            
+            .admin-content h2 {
+                font-size: 1.8em;
+            }
+            
+            .danger-zone .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-number {
+                font-size: 2.5em;
+            }
+            
+            .contestant-form, .voting-status-card, .ticket-actions, .ticket-stats {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="admin-icon">🔧</div>
+                <h1>The Gala Final Voting</h1>
+                <p class="subtitle">Admin Panel - Manage voting system and monitor results</p>
+                <div class="header-decoration"></div>
+            </div>
+        </header>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="admin-tab" onclick="showTab('contestants')">Contestants</button>
+            <button class="admin-tab" onclick="showTab('results')">Results</button>
+            <button class="admin-tab" onclick="showTab('tickets')">Tickets</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="admin-content active">
+            <h2>System Overview</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalTickets">-</div>
+                    <div class="stat-label">Total Tickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="usedTickets">-</div>
+                    <div class="stat-label">Used Tickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="unusedTickets">-</div>
+                    <div class="stat-label">Unused Tickets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVotes">-</div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+            </div>
+
+            <div class="voting-status-card">
+                <h3>Voting Status</h3>
+                <div id="votingStatusAdmin" class="status-indicator">
+                    <span id="statusTextAdmin">Checking...</span>
+                </div>
+                <p>Current Time: <span id="currentTimeAdmin"></span></p>
+            </div>
+
+            <div class="danger-zone">
+                <h3>⚠️ Danger Zone</h3>
+                <p>These actions cannot be undone. Use with caution.</p>
+                <button id="resetVoting" class="btn btn-danger">Reset All Voting</button>
+                <button id="generateTickets" class="btn btn-warning">Generate New Tickets</button>
+            </div>
+        </div>
+
+        <!-- Contestants Tab -->
+        <div id="contestants" class="admin-content">
+            <h2>Manage Contestants</h2>
+            
+            <div class="contestant-form">
+                <h3>Add New Contestant</h3>
+                <form id="addContestantForm">
+                    <div class="form-group">
+                        <label for="contestantName">Name:</label>
+                        <input type="text" id="contestantName" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="contestantDescription">Description:</label>
+                        <textarea id="contestantDescription" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="contestantImage">Image URL:</label>
+                        <input type="url" id="contestantImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Contestant</button>
+                </form>
+            </div>
+
+            <div id="contestantsList" class="contestants-grid">
+                <div class="loading">Loading contestants...</div>
+            </div>
+        </div>
+
+        <!-- Results Tab -->
+        <div id="results" class="admin-content">
+            <h2>Voting Results</h2>
+            <div id="resultsContainerAdmin" class="results-container">
+                <div class="loading">Loading results...</div>
+            </div>
+        </div>
+
+        <!-- Tickets Tab -->
+        <div id="tickets" class="admin-content">
+            <h2>Ticket Management</h2>
+            
+            <div class="ticket-actions">
+                <button id="exportTickets" class="btn btn-secondary">Export All Tickets</button>
+                <button id="exportUsedTickets" class="btn btn-secondary">Export Used Tickets</button>
+                <button id="exportUnusedTickets" class="btn btn-secondary">Export Unused Tickets</button>
+            </div>
+
+            <div class="ticket-stats">
+                <h3>Ticket Statistics</h3>
+                <div id="ticketStatsContainer">
+                    <div class="loading">Loading ticket statistics...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmYes" class="btn btn-danger">Yes, Continue</button>
+                <button id="confirmNo" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.1"></script>
+    <script>
+        // Admin-specific functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the tab
+            loadTabData(tabName);
+        }
+        
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'contestants':
+                    loadContestants();
+                    break;
+                case 'results':
+                    loadResults();
+                    break;
+                case 'tickets':
+                    loadTicketStats();
+                    break;
+            }
+        }
+        
+        function loadDashboardData() {
+            // Load statistics and status
+            fetch('/api/results')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalVotes').textContent = data.total_votes || 0;
+                    document.getElementById('votingStatusAdmin').innerHTML = 
+                        `<span class="${data.voting_open ? 'status-open' : 'status-closed'}">${data.voting_open ? 'Voting Open' : 'Voting Closed'}</span>`;
+                    document.getElementById('currentTimeAdmin').textContent = new Date(data.current_time).toLocaleString();
+                });
+            
+            // Load ticket statistics
+            loadTicketStats();
+        }
+        
+        function loadTicketStats() {
+            fetch('/api/ticket/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalTickets').textContent = data.total_tickets || 0;
+                    document.getElementById('usedTickets').textContent = data.used_tickets || 0;
+                    document.getElementById('unusedTickets').textContent = data.unused_tickets || 0;
+                })
+                .catch(error => {
+                    console.error('Error loading ticket stats:', error);
+                    document.getElementById('totalTickets').textContent = '-';
+                    document.getElementById('usedTickets').textContent = '-';
+                    document.getElementById('unusedTickets').textContent = '-';
+                });
+        }
+        
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            
+            // Add event listeners for admin actions
+            document.getElementById('resetVoting').addEventListener('click', confirmResetVoting);
+            document.getElementById('generateTickets').addEventListener('click', generateNewTickets);
+            document.getElementById('addContestantForm').addEventListener('submit', addContestant);
+        });
+    </script>
+</body>
+</html>
