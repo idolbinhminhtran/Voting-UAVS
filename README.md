@@ -20,13 +20,22 @@ voting-flask/
 ├── app/                    # Flask application package
 │   ├── __init__.py        # App factory and configuration
 │   ├── config.py          # Environment-based configuration
-│   ├── models.py          # SQLAlchemy ORM models
+│   ├── database.py        # Database adapter (Supabase/PostgreSQL)
+│   ├── models.py          # Data models
 │   ├── routes.py          # API endpoints
 │   ├── services.py        # Business logic layer
 │   └── utils.py           # Utility functions
-├── migrations/             # Database migrations
+├── migrations/             # Supabase database migrations
+│   ├── supabase_001_create_tables.sql
+│   ├── supabase_002_views_functions.sql
+│   └── supabase_003_security_triggers.sql
 ├── frontend/              # Static frontend files
 ├── scripts/               # Utility scripts
+│   ├── deploy_supabase.py      # Database deployment
+│   ├── generate_tickets_supabase.py  # Ticket generation
+│   ├── test_database.py        # Connection testing
+│   ├── show_status.py         # System status
+│   └── add_contestants.py     # Contestant management
 └── run.py                 # Application entry point
 ```
 
@@ -36,8 +45,7 @@ voting-flask/
 
 - Python 3.8+ (Python 3.11 or 3.12 recommended)
 - pip (Python package manager)
-
-**⚠️ Note**: Python 3.13 has known compatibility issues with some packages. If you encounter errors, use Python 3.11 or 3.12.
+- Supabase account and project
 
 ### Installation
 
@@ -57,30 +65,22 @@ voting-flask/
    ```bash
    pip install -r requirements.txt
    ```
-   
-   **If you encounter Python 3.13 compatibility issues:**
-   ```bash
-   python fix_python313.py
-   ```
 
-4. **Set up environment variables**
+4. **Set up Supabase**
    ```bash
+   # Create .env file with your Supabase credentials
    cp env.example .env
-   # Edit .env with your configuration
+   # Edit .env with your Supabase configuration
    ```
 
-5. **Run database migrations**
+5. **Deploy database schema**
    ```bash
-   # The app will create tables automatically on first run
-   # Or run manually:
-   sqlite3 voting.db < migrations/001_create_tables.sql
-   sqlite3 voting.db < migrations/002_results_view.sql
-   sqlite3 voting.db < migrations/003_constraints.sql
+   python scripts/deploy_supabase.py
    ```
 
 6. **Generate ticket codes**
    ```bash
-   python scripts/generate_tickets.py
+   python scripts/generate_tickets_supabase.py --count 100
    ```
 
 7. **Start the application**
@@ -88,12 +88,7 @@ voting-flask/
    python run.py
    ```
 
-**Alternative setup using the automated script:**
-```bash
-python setup.py
-```
-
-The application will be available at `http://localhost:5000`
+The application will be available at `http://localhost:5004`
 
 ## ⚙️ Configuration
 

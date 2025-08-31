@@ -1,10 +1,17 @@
 import os
 from datetime import datetime
 import pytz
+from pathlib import Path
+
+# Load .env file if it exists
+env_path = Path('.env')
+if env_path.exists():
+    from dotenv import load_dotenv
+    load_dotenv(env_path)
 
 class Config:
-    # Database - Support both SQLite and PostgreSQL/Supabase
-    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///voting.db')
+    # Database - Supabase PostgreSQL
+    DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:[password]@db.[project_id].supabase.co:5432/postgres')
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
@@ -14,7 +21,7 @@ class Config:
     SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')
     
     # Database type detection
-    DATABASE_TYPE = 'postgresql' if DATABASE_URL.startswith('postgresql://') else 'sqlite'
+    DATABASE_TYPE = 'postgresql'
     
     # Timezone
     TIMEZONE = os.getenv('TIMEZONE', 'Asia/Ho_Chi_Minh')

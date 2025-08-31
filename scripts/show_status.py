@@ -3,12 +3,15 @@
 Script to show the current status of all contestants
 """
 
-import sqlite3
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.database import db_adapter
+from app.config import Config
 from datetime import datetime
 
 def show_status():
     """Show current status of all contestants"""
-    conn = sqlite3.connect('voting.db')
     
     print("🏆 TOP 10 FINALISTS - Current Status")
     print("=" * 50)
@@ -16,7 +19,7 @@ def show_status():
     print()
     
     # Get contestants with vote counts
-    contestants = conn.execute('''
+    contestants = db_adapter.execute_query('''
         SELECT 
             c.id,
             c.name,
@@ -24,10 +27,10 @@ def show_status():
             COALESCE(COUNT(v.id), 0) as vote_count
         FROM contestants c
         LEFT JOIN votes v ON c.id = v.contestant_id
-        WHERE c.is_active = 1
+        WHERE c.is_active = TRUE
         GROUP BY c.id
         ORDER BY vote_count DESC, c.name
-    ''').fetchall()
+    ''', fetch_all=True)
     
     total_votes = sum(c[3] for c in contestants)
     
@@ -42,13 +45,13 @@ def show_status():
         print()
     
     # Show ticket statistics
-    ticket_stats = conn.execute('''
+    ticket_stats = db_adapter.execute_query('''
         SELECT 
             COUNT(*) as total_tickets,
-            SUM(CASE WHEN is_used = 1 THEN 1 ELSE 0 END) as used_tickets,
-            SUM(CASE WHEN is_used = 0 THEN 1 ELSE 0 END) as available_tickets
+            SUM(CASE WHEN is_used = TRUE THEN 1 ELSE 0 END) as used_tickets,
+            SUM(CASE WHEN is_used = FALSE THEN 1 ELSE 0 END) as available_tickets
         FROM tickets
-    ''').fetchone()
+    ''', fetch_one=True)
     
     print("🎫 Ticket Statistics:")
     print(f"   Total Tickets: {ticket_stats[0]}")
@@ -60,8 +63,6 @@ def show_status():
     print("⏰ Voting Hours: 24/7 (Always Open)")
     print("🌐 Website: http://localhost:5004/")
     print("🔧 Admin Panel: http://localhost:5004/admin")
-    
-    conn.close()
 
 if __name__ == "__main__":
     show_status()

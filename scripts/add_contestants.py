@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 """
-Script to add the 10 finalists to the database
+Script to add the 10 finalists to the Supabase database
 """
 
-import sqlite3
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app.database import db_adapter
+from app.config import Config
 from datetime import datetime
 
 def add_contestants():
-    """Add the 10 finalists to the database"""
-    conn = sqlite3.connect('voting.db')
+    """Add the 10 finalists to the Supabase database"""
     
     # Check if contestants already exist
-    cursor = conn.execute('SELECT COUNT(*) FROM contestants')
-    existing_count = cursor.fetchone()[0]
+    result = db_adapter.execute_query('SELECT COUNT(*) FROM contestants', fetch_one=True)
+    existing_count = result[0] if isinstance(result, tuple) else result['count']
     
     if existing_count > 0:
         print(f"Database already has {existing_count} contestants")
         print("Clearing existing contestants...")
-        conn.execute('DELETE FROM contestants')
-        conn.commit()
+        db_adapter.execute_query('DELETE FROM contestants')
     
     print("Adding 10 finalists...")
     
@@ -78,21 +80,18 @@ def add_contestants():
     
     # Insert contestants
     for contestant in contestants:
-        conn.execute(
+        db_adapter.execute_query(
             '''INSERT INTO contestants 
                (name, description, image_url, is_active, created_at) 
-               VALUES (?, ?, ?, ?, ?)''',
+               VALUES (%s, %s, %s, %s, %s)''',
             (
                 contestant['name'],
                 contestant['description'],
                 contestant['image_url'],
-                1,  # is_active
+                True,  # is_active
                 datetime.utcnow()
             )
         )
-    
-    conn.commit()
-    conn.close()
     
     print("✅ Added 10 finalists successfully!")
     print("\nFinalists:")
