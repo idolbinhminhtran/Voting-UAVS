@@ -37,8 +37,8 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-change-in-production')
     
     # Server configuration
-    HOST = os.getenv('HOST', '127.0.0.1')  # Changed from 0.0.0.0 to 127.0.0.1
-    PORT = int(os.getenv('PORT', '5004'))  # Changed to 5004
+    HOST = os.getenv('HOST', '0.0.0.0')  # Use 0.0.0.0 for Railway deployment
+    PORT = int(os.getenv('PORT', '5000'))  # Use 5000 for Railway
     
     @staticmethod
     def get_current_time():
