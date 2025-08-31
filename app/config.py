@@ -3,9 +3,18 @@ from datetime import datetime
 import pytz
 
 class Config:
-    # Database
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///voting.db')
+    # Database - Support both SQLite and PostgreSQL/Supabase
+    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///voting.db')
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Supabase configuration
+    SUPABASE_URL = os.getenv('SUPABASE_URL')
+    SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY')
+    SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')
+    
+    # Database type detection
+    DATABASE_TYPE = 'postgresql' if DATABASE_URL.startswith('postgresql://') else 'sqlite'
     
     # Timezone
     TIMEZONE = os.getenv('TIMEZONE', 'Asia/Ho_Chi_Minh')
