@@ -473,7 +473,6 @@
 
         <div class="admin-tabs">
             <button class="admin-tab active" onclick="showTab('dashboard')">Dashboard</button>
-            <button class="admin-tab" onclick="showTab('contestants')">Contestants</button>
             <button class="admin-tab" onclick="showTab('results')">Results</button>
             <button class="admin-tab" onclick="showTab('tickets')">Tickets</button>
         </div>
@@ -522,33 +521,7 @@
             </div>
         </div>
 
-        <!-- Contestants Tab -->
-        <div id="contestants" class="admin-content">
-            <h2>Manage Contestants</h2>
-            
-            <div class="contestant-form">
-                <h3>Add New Contestant</h3>
-                <form id="addContestantForm">
-                    <div class="form-group">
-                        <label for="contestantName">Name:</label>
-                        <input type="text" id="contestantName" required maxlength="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="contestantDescription">Description:</label>
-                        <textarea id="contestantDescription" rows="3" maxlength="500"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="contestantImage">Image URL:</label>
-                        <input type="url" id="contestantImage" placeholder="https://example.com/image.jpg">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Contestant</button>
-                </form>
-            </div>
 
-            <div id="contestantsList" class="contestants-grid">
-                <div class="loading">Loading contestants...</div>
-            </div>
-        </div>
 
         <!-- Results Tab -->
         <div id="results" class="admin-content">
@@ -675,9 +648,6 @@
                 case 'dashboard':
                     loadDashboardData();
                     break;
-                case 'contestants':
-                    loadContestants();
-                    break;
                 case 'results':
                     loadResults();
                     break;
@@ -734,7 +704,6 @@
             // Add event listeners for admin actions
             document.getElementById('resetVoting').addEventListener('click', confirmResetVoting);
             document.getElementById('generateTickets').addEventListener('click', generateNewTickets);
-            document.getElementById('addContestantForm').addEventListener('submit', addContestant);
         }
     </script>
 </body>
