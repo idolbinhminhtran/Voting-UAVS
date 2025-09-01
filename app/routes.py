@@ -109,3 +109,45 @@ def get_ticket_statistics():
         
     except Exception as e:
         return jsonify({'error': 'Internal server error'}), 500
+
+@api_bp.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for Railway"""
+    try:
+        # Test basic app functionality
+        from .config import Config
+        
+        health_status = {
+            'status': 'healthy',
+            'timestamp': Config.get_current_time().isoformat(),
+            'database_type': Config.DATABASE_TYPE,
+            'environment': 'production'
+        }
+        
+        # Test database connection
+        try:
+            from .database import db_adapter
+            result = db_adapter.execute_query('SELECT 1', fetch_one=True)
+            health_status['database'] = 'connected'
+        except Exception as db_error:
+            health_status['database'] = f'error: {str(db_error)}'
+            health_status['status'] = 'unhealthy'
+        
+        # Test contestants loading
+        try:
+            from .models import Contestant
+            contestants = Contestant.get_all()
+            health_status['contestants'] = f'{len(contestants)} loaded'
+        except Exception as contestant_error:
+            health_status['contestants'] = f'error: {str(contestant_error)}'
+            health_status['status'] = 'unhealthy'
+        
+        status_code = 200 if health_status['status'] == 'healthy' else 500
+        return jsonify(health_status), status_code
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': 'unknown'
+        }), 500
