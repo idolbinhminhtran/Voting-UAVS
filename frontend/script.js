@@ -324,15 +324,63 @@ function loadTicketStats() {
 
 function confirmResetVoting() {
     if (confirm('Are you sure you want to reset all voting? This action cannot be undone.')) {
-        // Implement reset voting functionality
-        console.log('Resetting voting...');
+        fetch('/api/admin/reset-voting', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Voting has been reset successfully!');
+                // Reload the dashboard data
+                if (typeof loadDashboardData === 'function') {
+                    loadDashboardData();
+                }
+            } else {
+                alert('Error: ' + (data.error || 'Failed to reset voting'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: Failed to reset voting');
+        });
     }
 }
 
 function generateNewTickets() {
-    if (confirm('Generate new tickets? This will invalidate all existing tickets.')) {
-        // Implement ticket generation
-        console.log('Generating new tickets...');
+    const count = prompt('How many tickets to generate? (default: 100)', '100');
+    if (count === null) return; // User cancelled
+    
+    const ticketCount = parseInt(count) || 100;
+    
+    if (confirm(`Generate ${ticketCount} new tickets? This will add to existing tickets.`)) {
+        fetch('/api/admin/generate-tickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ count: ticketCount }),
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Successfully generated ${data.count} new tickets!`);
+                // Reload the dashboard data
+                if (typeof loadDashboardData === 'function') {
+                    loadDashboardData();
+                }
+            } else {
+                alert('Error: ' + (data.error || 'Failed to generate tickets'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: Failed to generate tickets');
+        });
     }
 }
 

@@ -63,6 +63,50 @@ def admin_status():
         'username': session.get('admin_username', None)
     }), 200
 
+@api_bp.route('/admin/reset-voting', methods=['POST'])
+@require_admin
+def reset_voting():
+    """Reset all voting data"""
+    try:
+        from .services import VotingService
+        VotingService.reset_voting()
+        return jsonify({'success': True, 'message': 'Voting has been reset successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to reset voting'}), 500
+
+@api_bp.route('/admin/generate-tickets', methods=['POST'])
+@require_admin
+def generate_tickets():
+    """Generate new tickets"""
+    try:
+        data = request.get_json() or {}
+        count = data.get('count', 100)
+        
+        from .utils import generate_ticket_code
+        from .database import db_adapter
+        
+        # Generate unique ticket codes
+        generated_tickets = []
+        for i in range(count):
+            ticket_code = generate_ticket_code()
+            generated_tickets.append(ticket_code)
+        
+        # Insert tickets into database
+        for ticket_code in generated_tickets:
+            db_adapter.execute_query(
+                "INSERT INTO tickets (ticket_code, is_used) VALUES (%s, FALSE) ON CONFLICT (ticket_code) DO NOTHING",
+                (ticket_code,)
+            )
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Generated {len(generated_tickets)} new tickets',
+            'count': len(generated_tickets)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Failed to generate tickets'}), 500
+
 @api_bp.route('/vote', methods=['POST'])
 def submit_vote():
     """Submit a vote for a contestant"""
