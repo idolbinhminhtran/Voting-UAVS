@@ -506,6 +506,63 @@
 
     <script src="script.js?v=1.1"></script>
     <script>
+        // Check authentication on page load
+        window.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/admin/status', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    // Redirect to login if not authenticated
+                    window.location.href = '/admin-login';
+                    return;
+                }
+                
+                // Show username in header if authenticated
+                document.querySelector('.subtitle').textContent = `Welcome, ${data.username}! Manage voting system and monitor results`;
+                
+                // Add logout button
+                const headerContent = document.querySelector('.header-content');
+                const logoutBtn = document.createElement('button');
+                logoutBtn.textContent = 'Logout';
+                logoutBtn.className = 'btn btn-secondary';
+                logoutBtn.style.position = 'absolute';
+                logoutBtn.style.top = '20px';
+                logoutBtn.style.right = '20px';
+                logoutBtn.addEventListener('click', logout);
+                headerContent.style.position = 'relative';
+                headerContent.appendChild(logoutBtn);
+                
+                // Load initial data and initialize panel
+                loadDashboardData();
+                initializeAdminPanel();
+                
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                window.location.href = '/admin-login';
+            }
+        });
+        
+        async function logout() {
+            try {
+                const response = await fetch('/api/admin/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/admin-login';
+                } else {
+                    alert('Logout failed');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed');
+            }
+        }
+
         // Admin-specific functionality
         function showTab(tabName) {
             // Hide all tabs
@@ -557,12 +614,23 @@
         }
         
         function loadTicketStats() {
-            fetch('/api/ticket/stats')
-                .then(response => response.json())
+            fetch('/api/ticket/stats', {
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        // Not authenticated, redirect to login
+                        window.location.href = '/admin-login';
+                        return;
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    document.getElementById('totalTickets').textContent = data.total_tickets || 0;
-                    document.getElementById('usedTickets').textContent = data.used_tickets || 0;
-                    document.getElementById('unusedTickets').textContent = data.unused_tickets || 0;
+                    if (data) {
+                        document.getElementById('totalTickets').textContent = data.total_tickets || 0;
+                        document.getElementById('usedTickets').textContent = data.used_tickets || 0;
+                        document.getElementById('unusedTickets').textContent = data.unused_tickets || 0;
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading ticket stats:', error);
@@ -572,15 +640,13 @@
                 });
         }
         
-        // Initialize admin panel
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardData();
-            
+        // Initialize admin panel (moved to main DOMContentLoaded handler above)
+        function initializeAdminPanel() {
             // Add event listeners for admin actions
             document.getElementById('resetVoting').addEventListener('click', confirmResetVoting);
             document.getElementById('generateTickets').addEventListener('click', generateNewTickets);
             document.getElementById('addContestantForm').addEventListener('submit', addContestant);
-        });
+        }
     </script>
 </body>
 </html>

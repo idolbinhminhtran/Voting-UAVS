@@ -36,6 +36,10 @@ class Config:
     # Security
     SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-change-in-production')
     
+    # Admin credentials
+    ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'admin')
+    ADMIN_PASSWORD_HASH = os.getenv('ADMIN_PASSWORD_HASH', 'fcf730b6d95236ecd3c9fc2d92d7b6b2bb061514961aec041d6c7a7192f592e4')  # Default: secret123
+    
     # Server configuration
     HOST = os.getenv('HOST', '0.0.0.0')  # Use 0.0.0.0 for Railway deployment
     PORT = int(os.getenv('PORT', '5000'))  # Use 5000 for Railway

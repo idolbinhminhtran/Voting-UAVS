@@ -1,10 +1,67 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from .models import Contestant, get_voting_results, get_ticket_stats
 from .services import VotingService
 from .utils import rate_limit_key, get_client_ip
 from .config import Config
+import hashlib
+from functools import wraps
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
+
+# Admin authentication
+def require_admin(f):
+    """Decorator to require admin authentication"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_authenticated'):
+            return jsonify({'error': 'Admin authentication required'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+def hash_password(password):
+    """Hash password using SHA-256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+@api_bp.route('/admin/login', methods=['POST'])
+def admin_login():
+    """Admin login endpoint"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({'error': 'Username and password required'}), 400
+        
+        # Admin credentials (you can change these)
+        ADMIN_USERNAME = Config.ADMIN_USERNAME
+        ADMIN_PASSWORD_HASH = Config.ADMIN_PASSWORD_HASH
+        
+        # Verify credentials
+        if username == ADMIN_USERNAME and hash_password(password) == ADMIN_PASSWORD_HASH:
+            session['admin_authenticated'] = True
+            session['admin_username'] = username
+            return jsonify({'success': True, 'message': 'Login successful'}), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+            
+    except Exception as e:
+        return jsonify({'error': 'Login failed'}), 500
+
+@api_bp.route('/admin/logout', methods=['POST'])
+def admin_logout():
+    """Admin logout endpoint"""
+    session.pop('admin_authenticated', None)
+    session.pop('admin_username', None)
+    return jsonify({'success': True, 'message': 'Logged out successfully'}), 200
+
+@api_bp.route('/admin/status', methods=['GET'])
+def admin_status():
+    """Check admin authentication status"""
+    return jsonify({
+        'authenticated': session.get('admin_authenticated', False),
+        'username': session.get('admin_username', None)
+    }), 200
 
 @api_bp.route('/vote', methods=['POST'])
 def submit_vote():
@@ -94,6 +151,7 @@ def validate_ticket():
         return jsonify({'error': 'Internal server error'}), 500
 
 @api_bp.route('/ticket/stats', methods=['GET'])
+@require_admin
 def get_ticket_statistics():
     """Get ticket statistics for admin panel"""
     try:

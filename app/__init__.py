@@ -34,6 +34,11 @@ def create_app(config_class=Config):
         print(f"Frontend route /admin accessed, serving from {frontend_dir}")  # Debug print
         return send_from_directory(str(frontend_dir), 'admin.html')
     
+    @app.route('/admin-login')
+    def admin_login_page():
+        print(f"Frontend route /admin-login accessed, serving from {frontend_dir}")  # Debug print
+        return send_from_directory(str(frontend_dir), 'admin-login.html')
+    
     @app.route('/styles.css')
     def styles():
         return send_from_directory(str(frontend_dir), 'styles.css')
