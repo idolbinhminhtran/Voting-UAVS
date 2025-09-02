@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting - The Gala Final UGT 25</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Voting specific styles */
+        .voting-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .seat-info-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .seat-info-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .seat-details {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .ticket-input-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8ecf4;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .verify-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .ticket-status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        
+        .ticket-valid {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .ticket-invalid {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .contestants-section {
+            margin-bottom: 30px;
+        }
+        
+        .contestants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .contestant-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        
+        .contestant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .contestant-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+        
+        .contestant-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .contestant-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .contestant-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .vote-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .vote-button.enabled {
+            opacity: 1;
+            cursor: pointer;
+        }
+        
+        .vote-button.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .contestants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="voting-container">
+            <header>
+                <div class="header-content">
+                    <h1>🗳️ The Gala Final Voting</h1>
+                    <p class="subtitle">UGT 25 - Bỏ phiếu cho thí sinh yêu thích</p>
+                    <div class="header-decoration"></div>
+                </div>
+            </header>
+            
+            <!-- Seat Information Banner -->
+            <div id="seatInfoBanner" class="seat-info-banner" style="display: none;">
+                <div class="seat-info-title">🪑 Ghế của bạn</div>
+                <div class="seat-details" id="seatDetailsInfo"></div>
+            </div>
+            
+            <!-- Ticket Input Section -->
+            <div class="ticket-input-section">
+                <h3>🎫 Xác thực vé của bạn</h3>
+                <div class="input-group">
+                    <div class="form-group">
+                        <label for="ticketCode">Mã vé:</label>
+                        <input type="text" id="ticketCode" placeholder="Nhập mã vé 8 ký tự" maxlength="8" style="text-transform: uppercase;">
+                    </div>
+                    <button id="verifyTicket" class="verify-btn">Xác thực</button>
+                </div>
+                <div id="ticketStatus" class="ticket-status" style="display: none;"></div>
+            </div>
+            
+            <!-- Contestants Section -->
+            <div class="contestants-section">
+                <h2>🎭 Chọn thí sinh yêu thích</h2>
+                <div id="contestantsGrid" class="contestants-grid">
+                    <div class="loading">Đang tải danh sách thí sinh...</div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button id="backToSeating" class="btn btn-secondary">← Quay lại chọn ghế</button>
+                <button id="goToResults" class="btn btn-secondary">Xem kết quả 📊</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎉 Bỏ phiếu thành công!</h3>
+            </div>
+            <div class="modal-body">
+                <p>Cảm ơn bạn đã bỏ phiếu cho: <strong id="votedContestant"></strong></p>
+                <p>Ghế: <strong id="votedSeat"></strong></p>
+                <p>Vé của bạn đã được sử dụng và không thể bỏ phiếu lại.</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="goToResults()" class="btn btn-primary">Xem kết quả</button>
+                <button onclick="closeModal()" class="btn btn-secondary">Đóng</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>❌ Lỗi</h3>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="btn btn-secondary">Đóng</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let selectedSeat = null;
+        let validTicket = null;
+        let contestants = [];
+        let selectedContestant = null;
+        
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            // Check if coming from seating selection
+            const seatData = sessionStorage.getItem('selectedSeat');
+            if (seatData) {
+                selectedSeat = JSON.parse(seatData);
+                showSeatInfo();
+            }
+            
+            loadContestants();
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            document.getElementById('verifyTicket').addEventListener('click', verifyTicket);
+            document.getElementById('ticketCode').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyTicket();
+                }
+            });
+            document.getElementById('backToSeating').addEventListener('click', () => {
+                window.location.href = '/seating';
+            });
+            document.getElementById('goToResults').addEventListener('click', goToResults);
+        }
+        
+        function showSeatInfo() {
+            const banner = document.getElementById('seatInfoBanner');
+            const details = document.getElementById('seatDetailsInfo');
+            
+            if (selectedSeat) {
+                banner.style.display = 'block';
+                details.textContent = `${selectedSeat.section_code} - Hàng ${selectedSeat.seat_row} - Ghế ${selectedSeat.seat_number} (${selectedSeat.seat_code})`;
+            }
+        }
+        
+        async function verifyTicket() {
+            const ticketCode = document.getElementById('ticketCode').value.trim().toUpperCase();
+            const statusDiv = document.getElementById('ticketStatus');
+            
+            if (!ticketCode) {
+                showTicketStatus('Vui lòng nhập mã vé', false);
+                return;
+            }
+            
+            if (ticketCode.length !== 8) {
+                showTicketStatus('Mã vé phải có đúng 8 ký tự', false);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/ticket/validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticket_code: ticketCode })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.valid) {
+                    validTicket = ticketCode;
+                    showTicketStatus('✅ Vé hợp lệ! Bạn có thể bỏ phiếu.', true);
+                    enableVoting();
+                } else {
+                    showTicketStatus(data.message || 'Vé không hợp lệ hoặc đã được sử dụng', false);
+                    disableVoting();
+                }
+            } catch (error) {
+                console.error('Error verifying ticket:', error);
+                showTicketStatus('Lỗi kết nối. Vui lòng thử lại.', false);
+                disableVoting();
+            }
+        }
+        
+        function showTicketStatus(message, isValid) {
+            const statusDiv = document.getElementById('ticketStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = message;
+            statusDiv.className = isValid ? 'ticket-status ticket-valid' : 'ticket-status ticket-invalid';
+        }
+        
+        function enableVoting() {
+            document.querySelectorAll('.vote-button').forEach(btn => {
+                btn.classList.add('enabled');
+                btn.disabled = false;
+            });
+        }
+        
+        function disableVoting() {
+            document.querySelectorAll('.vote-button').forEach(btn => {
+                btn.classList.remove('enabled');
+                btn.disabled = true;
+            });
+        }
+        
+        async function loadContestants() {
+            try {
+                const response = await fetch('/api/contestants');
+                const data = await response.json();
+                contestants = data;
+                renderContestants();
+            } catch (error) {
+                console.error('Error loading contestants:', error);
+                document.getElementById('contestantsGrid').innerHTML = 
+                    '<div class="error">Không thể tải danh sách thí sinh</div>';
+            }
+        }
+        
+        function renderContestants() {
+            const grid = document.getElementById('contestantsGrid');
+            
+            if (contestants.length === 0) {
+                grid.innerHTML = '<div class="error">Không có thí sinh nào</div>';
+                return;
+            }
+            
+            grid.innerHTML = contestants.map(contestant => `
+                <div class="contestant-card" data-id="${contestant.id}">
+                    <img src="${contestant.image_url || '/images/default-avatar.svg'}" 
+                         alt="${contestant.name}" class="contestant-image"
+                         onerror="this.src='/images/default-avatar.svg'">
+                    <div class="contestant-name">${contestant.name}</div>
+                    <div class="contestant-description">${contestant.description || 'Thí sinh tài năng'}</div>
+                    <button class="vote-button" onclick="selectContestant(${contestant.id})">
+                        Bỏ phiếu cho ${contestant.name}
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function selectContestant(contestantId) {
+            if (!validTicket) {
+                showError('Vui lòng xác thực vé trước khi bỏ phiếu');
+                return;
+            }
+            
+            selectedContestant = contestants.find(c => c.id === contestantId);
+            
+            if (selectedContestant) {
+                // Highlight selected contestant
+                document.querySelectorAll('.contestant-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                document.querySelector(`[data-id="${contestantId}"]`).classList.add('selected');
+                
+                // Confirm vote
+                if (confirm(`Bạn có chắc muốn bỏ phiếu cho "${selectedContestant.name}"?\n\nLưu ý: Sau khi bỏ phiếu, bạn không thể thay đổi.`)) {
+                    submitVote();
+                }
+            }
+        }
+        
+        async function submitVote() {
+            if (!selectedContestant || !validTicket) {
+                showError('Vui lòng chọn thí sinh và xác thực vé');
+                return;
+            }
+            
+            try {
+                const voteData = {
+                    contestant_id: selectedContestant.id,
+                    ticket_code: validTicket
+                };
+                
+                // Add seat information if available
+                if (selectedSeat) {
+                    voteData.seat_code = selectedSeat.seat_code;
+                }
+                
+                const response = await fetch('/api/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(voteData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Clear session data
+                    sessionStorage.removeItem('selectedSeat');
+                    
+                    // Show success modal
+                    document.getElementById('votedContestant').textContent = selectedContestant.name;
+                    document.getElementById('votedSeat').textContent = selectedSeat ? selectedSeat.seat_code : 'Không xác định';
+                    document.getElementById('successModal').classList.remove('hidden');
+                    
+                    // Disable further voting
+                    disableVoting();
+                    document.getElementById('ticketCode').disabled = true;
+                    document.getElementById('verifyTicket').disabled = true;
+                    
+                } else {
+                    showError(data.error || 'Không thể bỏ phiếu. Vui lòng thử lại.');
+                }
+            } catch (error) {
+                console.error('Error submitting vote:', error);
+                showError('Lỗi kết nối. Vui lòng thử lại.');
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.add('hidden');
+            });
+        }
+        
+        function goToResults() {
+            window.location.href = '/#results';
+        }
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

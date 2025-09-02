@@ -107,6 +107,107 @@ def generate_tickets():
     except Exception as e:
         return jsonify({'error': 'Failed to generate tickets'}), 500
 
+# Seating System API Endpoints
+@api_bp.route('/seating/sections', methods=['GET'])
+def get_seating_sections():
+    """Get all seating sections"""
+    try:
+        from .database import db_adapter
+        sections = db_adapter.execute_query(
+            "SELECT * FROM seating_sections WHERE is_active = TRUE ORDER BY section_code",
+            fetch_all=True
+        )
+        return jsonify(sections), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to load seating sections'}), 500
+
+@api_bp.route('/seating/availability', methods=['GET'])
+def get_seat_availability():
+    """Get seat availability for all sections"""
+    try:
+        from .database import db_adapter
+        seats = db_adapter.execute_query(
+            "SELECT * FROM seat_availability ORDER BY section_code, seat_row, seat_number",
+            fetch_all=True
+        )
+        
+        # Group seats by section
+        sections = {}
+        for seat in seats:
+            section_code = seat['section_code']
+            if section_code not in sections:
+                sections[section_code] = []
+            sections[section_code].append({
+                'seat_id': seat['seat_id'],
+                'seat_code': seat['seat_code'],
+                'seat_row': seat['seat_row'],
+                'seat_number': seat['seat_number'],
+                'is_available': seat['is_available'],
+                'is_reserved': seat['is_reserved'],
+                'section_code': seat['section_code'],
+                'section_name': seat['section_name'],
+                'section_type': seat['section_type'],
+                'color_code': seat['color_code'],
+                'ticket_used': seat['ticket_used'] or False
+            })
+        
+        return jsonify(sections), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to load seat availability'}), 500
+
+@api_bp.route('/seating/reserve', methods=['POST'])
+def reserve_seat():
+    """Reserve a seat"""
+    try:
+        data = request.get_json()
+        seat_code = data.get('seat_code')
+        
+        if not seat_code:
+            return jsonify({'error': 'Seat code is required'}), 400
+        
+        from .database import db_adapter
+        
+        # Check if seat is available
+        seat = db_adapter.execute_query(
+            "SELECT * FROM seats WHERE seat_code = %s",
+            (seat_code,),
+            fetch_one=True
+        )
+        
+        if not seat:
+            return jsonify({'error': 'Seat not found'}), 404
+        
+        if not seat['is_available'] or seat['is_reserved']:
+            return jsonify({'error': 'Seat not available'}), 400
+        
+        # Reserve the seat
+        result = db_adapter.execute_query(
+            "SELECT reserve_seat(%s) as success",
+            (seat_code,),
+            fetch_one=True
+        )
+        
+        if result['success']:
+            return jsonify({'success': True, 'message': 'Seat reserved successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to reserve seat'}), 400
+        
+    except Exception as e:
+        return jsonify({'error': 'Failed to reserve seat'}), 500
+
+@api_bp.route('/seating/stats', methods=['GET'])
+def get_seating_stats():
+    """Get seating statistics"""
+    try:
+        from .database import db_adapter
+        stats = db_adapter.execute_query(
+            "SELECT * FROM get_section_stats()",
+            fetch_all=True
+        )
+        return jsonify(stats), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to load seating statistics'}), 500
+
 @api_bp.route('/vote', methods=['POST'])
 def submit_vote():
     """Submit a vote for a contestant"""

@@ -5,6 +5,152 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Gala Final Voting - Cast Your Vote</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Home page specific styles */
+        .welcome-banner {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .welcome-banner h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-banner p {
+            font-size: 1.2em;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .action-card.primary {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-card.primary:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+        
+        .action-card.secondary {
+            border-color: rgba(108, 117, 125, 0.3);
+        }
+        
+        .action-card.secondary:hover {
+            background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(73, 80, 87, 0.05));
+        }
+        
+        .action-card.tertiary {
+            border-color: rgba(40, 167, 69, 0.3);
+        }
+        
+        .action-card.tertiary:hover {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05), rgba(32, 134, 107, 0.05));
+        }
+        
+        .card-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .action-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .action-card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-size: 1.05em;
+        }
+        
+        .action-card .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .results-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .action-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .welcome-banner h2 {
+                font-size: 2em;
+            }
+            
+            .welcome-banner p {
+                font-size: 1.1em;
+            }
+            
+            .action-card {
+                padding: 25px 20px;
+            }
+            
+            .card-icon {
+                font-size: 3em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -17,20 +163,37 @@
         </header>
 
         <div class="voting-section">
-            <div class="ticket-input">
-                <label for="ticketCode">Enter Your Ticket Code:</label>
-                <input type="text" id="ticketCode" placeholder="e.g., ABC12345" maxlength="20">
-                <button id="validateTicket" class="btn btn-secondary">Validate Ticket</button>
+            <div class="welcome-banner">
+                <h2>🎭 UGT 25 - The Gala Final</h2>
+                <p>Chào mừng đến với đêm chung kết UGT 25! Hãy chọn ghế và bỏ phiếu cho thí sinh yêu thích của bạn.</p>
             </div>
-
-            <div id="ticketStatus" class="ticket-status hidden"></div>
-
-            <div id="contestantSelection" class="contestant-selection hidden">
-                <h3>Select Your Contestant:</h3>
-                <div id="contestantsList" class="contestants-grid"></div>
+            
+            <div class="action-cards">
+                <div class="action-card primary">
+                    <div class="card-icon">🪑</div>
+                    <h3>Chọn ghế ngồi</h3>
+                    <p>Xem sơ đồ ghế ngồi và chọn vị trí của bạn</p>
+                    <button onclick="window.location.href='/seating'" class="btn btn-primary">
+                        Chọn ghế ngồi
+                    </button>
+                </div>
                 
-                <div class="vote-button-container">
-                    <button id="submitVote" class="btn btn-primary" disabled>Submit Vote</button>
+                <div class="action-card secondary">
+                    <div class="card-icon">🗳️</div>
+                    <h3>Bỏ phiếu trực tiếp</h3>
+                    <p>Nếu bạn đã biết mã vé, có thể bỏ phiếu ngay</p>
+                    <button onclick="window.location.href='/voting'" class="btn btn-secondary">
+                        Bỏ phiếu ngay
+                    </button>
+                </div>
+                
+                <div class="action-card tertiary">
+                    <div class="card-icon">📊</div>
+                    <h3>Xem kết quả</h3>
+                    <p>Theo dõi kết quả bỏ phiếu trực tiếp</p>
+                    <button onclick="scrollToResults()" class="btn btn-secondary">
+                        Xem kết quả
+                    </button>
                 </div>
             </div>
         </div>
@@ -77,5 +240,23 @@
     </div>
 
     <script src="script.js?v=1.1"></script>
+    <script>
+        function scrollToResults() {
+            // Scroll to results section or load results page
+            const resultsSection = document.getElementById('results');
+            if (resultsSection) {
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // If no results section on page, load results
+                loadResults();
+                setTimeout(() => {
+                    const newResultsSection = document.getElementById('results');
+                    if (newResultsSection) {
+                        newResultsSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 500);
+            }
+        }
+    </script>
 </body>
 </html>
