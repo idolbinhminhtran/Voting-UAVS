@@ -216,35 +216,35 @@
             <header>
                 <div class="header-content">
                     <h1>🗳️ The Gala Final Voting</h1>
-                    <p class="subtitle">UGT 25 - Bỏ phiếu cho thí sinh yêu thích</p>
+                    <p class="subtitle">UGT 25 - Vote for your favorite contestant</p>
                     <div class="header-decoration"></div>
                 </div>
             </header>
             
             <!-- Ticket Input Section -->
             <div class="ticket-input-section">
-                <h3>🎫 Xác thực vé của bạn</h3>
+                <h3>🎫 Verify Your Ticket</h3>
                 <div class="input-group">
                     <div class="form-group">
-                        <label for="ticketCode">Mã vé:</label>
-                        <input type="text" id="ticketCode" placeholder="Nhập mã vé 8 ký tự" maxlength="8" style="text-transform: uppercase;">
+                        <label for="ticketCode">Ticket Code:</label>
+                        <input type="text" id="ticketCode" placeholder="Enter 8-character ticket code" maxlength="8" style="text-transform: uppercase;">
                     </div>
-                    <button id="verifyTicket" class="verify-btn">Xác thực</button>
+                    <button id="verifyTicket" class="verify-btn">Verify</button>
                 </div>
                 <div id="ticketStatus" class="ticket-status" style="display: none;"></div>
             </div>
             
             <!-- Contestants Section -->
             <div class="contestants-section">
-                <h2>🎭 Chọn thí sinh yêu thích</h2>
+                <h2>🎭 Choose Your Favorite Contestant</h2>
                 <div id="contestantsGrid" class="contestants-grid">
-                    <div class="loading">Đang tải danh sách thí sinh...</div>
+                    <div class="loading">Loading contestants...</div>
                 </div>
             </div>
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="/" class="btn btn-secondary">← Quay lại trang chủ</a>
+                <a href="/" class="btn btn-secondary">← Back to Home</a>
             </div>
         </div>
     </div>
@@ -253,15 +253,15 @@
     <div id="successModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>🎉 Bỏ phiếu thành công!</h3>
+                <h3>🎉 Vote Submitted Successfully!</h3>
             </div>
             <div class="modal-body">
-                <p>Cảm ơn bạn đã bỏ phiếu cho: <strong id="votedContestant"></strong></p>
-                <p>Vé của bạn đã được sử dụng và không thể bỏ phiếu lại.</p>
-                <p>Chúc bạn có một đêm thưởng thức âm nhạc tuyệt vời!</p>
+                <p>Thank you for voting for: <strong id="votedContestant"></strong></p>
+                <p>Your ticket has been used and cannot be used again.</p>
+                <p>Enjoy your wonderful music night!</p>
             </div>
             <div class="modal-footer">
-                <button onclick="closeModal()" class="btn btn-secondary">Đóng</button>
+                <button onclick="closeModal()" class="btn btn-secondary">Close</button>
             </div>
         </div>
     </div>
@@ -270,13 +270,13 @@
     <div id="errorModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>❌ Lỗi</h3>
+                <h3>❌ Error</h3>
             </div>
             <div class="modal-body">
                 <p id="errorMessage"></p>
             </div>
             <div class="modal-footer">
-                <button onclick="closeModal()" class="btn btn-secondary">Đóng</button>
+                <button onclick="closeModal()" class="btn btn-secondary">Close</button>
             </div>
         </div>
     </div>
@@ -309,12 +309,12 @@
             const statusDiv = document.getElementById('ticketStatus');
             
             if (!ticketCode) {
-                showTicketStatus('Vui lòng nhập mã vé', false);
+                showTicketStatus('Please enter a ticket code', false);
                 return;
             }
             
             if (ticketCode.length !== 8) {
-                showTicketStatus('Mã vé phải có đúng 8 ký tự', false);
+                showTicketStatus('Ticket code must be exactly 8 characters', false);
                 return;
             }
             
@@ -331,15 +331,15 @@
                 
                 if (response.ok && data.valid) {
                     validTicket = ticketCode;
-                    showTicketStatus('✅ Vé hợp lệ! Bạn có thể bỏ phiếu.', true);
+                    showTicketStatus('✅ Valid ticket! You can now vote.', true);
                     enableVoting();
                 } else {
-                    showTicketStatus(data.message || 'Vé không hợp lệ hoặc đã được sử dụng', false);
+                    showTicketStatus(data.message || 'Invalid ticket or already used', false);
                     disableVoting();
                 }
             } catch (error) {
                 console.error('Error verifying ticket:', error);
-                showTicketStatus('Lỗi kết nối. Vui lòng thử lại.', false);
+                showTicketStatus('Connection error. Please try again.', false);
                 disableVoting();
             }
         }
@@ -374,7 +374,7 @@
             } catch (error) {
                 console.error('Error loading contestants:', error);
                 document.getElementById('contestantsGrid').innerHTML = 
-                    '<div class="error">Không thể tải danh sách thí sinh</div>';
+                    '<div class="error">Unable to load contestants list</div>';
             }
         }
         
@@ -382,7 +382,7 @@
             const grid = document.getElementById('contestantsGrid');
             
             if (contestants.length === 0) {
-                grid.innerHTML = '<div class="error">Không có thí sinh nào</div>';
+                grid.innerHTML = '<div class="error">No contestants available</div>';
                 return;
             }
             
@@ -392,9 +392,9 @@
                          alt="${contestant.name}" class="contestant-image"
                          onerror="this.src='/images/default-avatar.svg'">
                     <div class="contestant-name">${contestant.name}</div>
-                    <div class="contestant-description">${contestant.description || 'Thí sinh tài năng'}</div>
+                    <div class="contestant-description">${contestant.description || 'Talented contestant'}</div>
                     <button class="vote-button" onclick="selectContestant(${contestant.id})">
-                        Bỏ phiếu cho ${contestant.name}
+                        Vote for ${contestant.name}
                     </button>
                 </div>
             `).join('');
@@ -402,7 +402,7 @@
         
         function selectContestant(contestantId) {
             if (!validTicket) {
-                showError('Vui lòng xác thực vé trước khi bỏ phiếu');
+                showError('Please verify your ticket before voting');
                 return;
             }
             
@@ -416,7 +416,7 @@
                 document.querySelector(`[data-id="${contestantId}"]`).classList.add('selected');
                 
                 // Confirm vote
-                if (confirm(`Bạn có chắc muốn bỏ phiếu cho "${selectedContestant.name}"?\n\nLưu ý: Sau khi bỏ phiếu, bạn không thể thay đổi.`)) {
+                if (confirm(`Are you sure you want to vote for "${selectedContestant.name}"?\n\nNote: After voting, you cannot change your vote.`)) {
                     submitVote();
                 }
             }
@@ -424,7 +424,7 @@
         
         async function submitVote() {
             if (!selectedContestant || !validTicket) {
-                showError('Vui lòng chọn thí sinh và xác thực vé');
+                showError('Please select a contestant and verify your ticket');
                 return;
             }
             
@@ -455,11 +455,11 @@
                     document.getElementById('verifyTicket').disabled = true;
                     
                 } else {
-                    showError(data.error || 'Không thể bỏ phiếu. Vui lòng thử lại.');
+                    showError(data.error || 'Unable to vote. Please try again.');
                 }
             } catch (error) {
                 console.error('Error submitting vote:', error);
-                showError('Lỗi kết nối. Vui lòng thử lại.');
+                showError('Connection error. Please try again.');
             }
         }
         
