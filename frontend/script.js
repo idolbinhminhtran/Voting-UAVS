@@ -81,7 +81,7 @@ async function validateTicket() {
             showTicketValid(ticketCode);
             currentTicketCode = ticketCode;
         } else {
-            showTicketInvalid(data.error);
+            showTicketInvalid(data.error || 'Invalid ticket or already used');
         }
     } catch (error) {
         showError('Failed to validate ticket. Please try again.');
