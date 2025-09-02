@@ -244,7 +244,7 @@
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button id="goToResults" class="btn btn-secondary">Xem kết quả 📊</button>
+                <a href="/" class="btn btn-secondary">← Quay lại trang chủ</a>
             </div>
         </div>
     </div>
@@ -258,9 +258,9 @@
             <div class="modal-body">
                 <p>Cảm ơn bạn đã bỏ phiếu cho: <strong id="votedContestant"></strong></p>
                 <p>Vé của bạn đã được sử dụng và không thể bỏ phiếu lại.</p>
+                <p>Chúc bạn có một đêm thưởng thức âm nhạc tuyệt vời!</p>
             </div>
             <div class="modal-footer">
-                <button onclick="goToResults()" class="btn btn-primary">Xem kết quả</button>
                 <button onclick="closeModal()" class="btn btn-secondary">Đóng</button>
             </div>
         </div>
@@ -300,7 +300,6 @@
                     verifyTicket();
                 }
             });
-            document.getElementById('goToResults').addEventListener('click', goToResults);
         }
         
 
@@ -473,10 +472,6 @@
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.classList.add('hidden');
             });
-        }
-        
-        function goToResults() {
-            window.location.href = '/#results';
         }
         
         // Close modals when clicking outside
