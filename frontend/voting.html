@@ -145,7 +145,6 @@
             background-clip: text;
             font-weight: 800;
             position: relative;
-            padding-bottom: 20px;
             letter-spacing: 1px;
             text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
             animation: gradientShift 3s ease-in-out infinite;
@@ -154,32 +153,6 @@
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
-        }
-        
-        .contestants-section h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 4px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 200%;
-            border-radius: 2px;
-            animation: gradientShift 3s ease-in-out infinite;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
-        }
-        
-        .contestants-section .subtitle {
-            text-align: center;
-            color: #555;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            font-style: italic;
-            font-weight: 500;
-            opacity: 0.9;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         .contestants-grid {
@@ -393,7 +366,6 @@
             <!-- Contestants Section -->
             <div class="contestants-section">
                 <h2>🎭 Choose Your Favorite Contestant</h2>
-                <p class="subtitle">Select the contestant you want to vote for</p>
                 <div id="contestantsGrid" class="contestants-grid">
                     <div class="loading">Loading contestants...</div>
                 </div>
