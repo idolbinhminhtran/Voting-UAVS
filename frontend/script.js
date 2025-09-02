@@ -18,29 +18,43 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    loadContestants();
-    updateVotingStatus();
+    // Only load contestants and update status if we're on a page that needs them
+    if (document.getElementById('contestantsList') || document.getElementById('contestantsGrid')) {
+        loadContestants();
+    }
     
-    // Set up event listeners
+    if (document.getElementById('statusText')) {
+        updateVotingStatus();
+        // Update status every minute
+        setInterval(updateVotingStatus, 60000);
+    }
+    
+    // Set up event listeners only if elements exist
     setupEventListeners();
-    
-    // Update status every minute
-    setInterval(updateVotingStatus, 60000);
 }
 
 function setupEventListeners() {
-    // Ticket validation
-    document.getElementById('validateTicket').addEventListener('click', validateTicket);
+    // Ticket validation - only if elements exist
+    const validateButton = document.getElementById('validateTicket');
+    if (validateButton) {
+        validateButton.addEventListener('click', validateTicket);
+    }
     
-    // Vote submission
-    document.getElementById('submitVote').addEventListener('click', submitVote);
+    // Vote submission - only if elements exist
+    const submitButton = document.getElementById('submitVote');
+    if (submitButton) {
+        submitButton.addEventListener('click', submitVote);
+    }
     
-    // Enter key in ticket input
-    document.getElementById('ticketCode').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            validateTicket();
-        }
-    });
+    // Enter key in ticket input - only if element exists
+    const ticketInput = document.getElementById('ticketCode');
+    if (ticketInput) {
+        ticketInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                validateTicket();
+            }
+        });
+    }
 }
 
 // Ticket validation
@@ -77,6 +91,8 @@ async function validateTicket() {
 
 function showTicketValid(ticketCode) {
     const statusDiv = document.getElementById('ticketStatus');
+    if (!statusDiv) return;
+    
     statusDiv.innerHTML = `
         <div class="ticket-status valid">
             <strong>✓ Valid Ticket!</strong><br>
@@ -86,7 +102,10 @@ function showTicketValid(ticketCode) {
     statusDiv.classList.remove('hidden');
     
     // Show contestant selection
-    document.getElementById('contestantSelection').classList.remove('hidden');
+    const contestantSelection = document.getElementById('contestantSelection');
+    if (contestantSelection) {
+        contestantSelection.classList.remove('hidden');
+    }
     
     // Enable submit button if contestant is selected
     updateSubmitButton();
@@ -94,6 +113,8 @@ function showTicketValid(ticketCode) {
 
 function showTicketInvalid(error) {
     const statusDiv = document.getElementById('ticketStatus');
+    if (!statusDiv) return;
+    
     statusDiv.innerHTML = `
         <div class="ticket-status invalid">
             <strong>✗ Invalid Ticket</strong><br>
@@ -103,7 +124,10 @@ function showTicketInvalid(error) {
     statusDiv.classList.remove('hidden');
     
     // Hide contestant selection
-    document.getElementById('contestantSelection').classList.add('hidden');
+    const contestantSelection = document.getElementById('contestantSelection');
+    if (contestantSelection) {
+        contestantSelection.classList.add('hidden');
+    }
     
     // Clear any previous selection
     selectedContestantId = null;
@@ -128,7 +152,9 @@ function selectContestant(contestantId) {
 
 function updateSubmitButton() {
     const submitButton = document.getElementById('submitVote');
-    submitButton.disabled = !(currentTicketCode && selectedContestantId);
+    if (submitButton) {
+        submitButton.disabled = !(currentTicketCode && selectedContestantId);
+    }
 }
 
 // Vote submission
@@ -165,9 +191,21 @@ async function submitVote() {
 }
 
 function resetVotingForm() {
-    document.getElementById('ticketCode').value = '';
-    document.getElementById('ticketStatus').classList.add('hidden');
-    document.getElementById('contestantSelection').classList.add('hidden');
+    const ticketInput = document.getElementById('ticketCode');
+    if (ticketInput) {
+        ticketInput.value = '';
+    }
+    
+    const statusDiv = document.getElementById('ticketStatus');
+    if (statusDiv) {
+        statusDiv.classList.add('hidden');
+    }
+    
+    const contestantSelection = document.getElementById('contestantSelection');
+    if (contestantSelection) {
+        contestantSelection.classList.add('hidden');
+    }
+    
     selectedContestantId = null;
     currentTicketCode = null;
     
@@ -186,7 +224,10 @@ async function loadContestants() {
         displayContestants(contestants);
     } catch (error) {
         console.error('Failed to load contestants:', error);
-        showError('Failed to load contestants');
+        // Only show error if we're on a page that displays contestants
+        if (document.getElementById('contestantsList') || document.getElementById('contestantsGrid')) {
+            showError('Failed to load contestants');
+        }
     }
 }
 
@@ -294,13 +335,27 @@ function displayResults(results) {
 
 // Modal functions
 function showSuccess(contestantName) {
-    document.getElementById('votedContestant').textContent = contestantName;
-    document.getElementById('successModal').classList.remove('hidden');
+    const votedContestant = document.getElementById('votedContestant');
+    const successModal = document.getElementById('successModal');
+    
+    if (votedContestant && successModal) {
+        votedContestant.textContent = contestantName;
+        successModal.classList.remove('hidden');
+    }
 }
 
 function showError(message) {
-    document.getElementById('errorMessage').textContent = message;
-    document.getElementById('errorModal').classList.remove('hidden');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorModal = document.getElementById('errorModal');
+    
+    if (errorMessage && errorModal) {
+        errorMessage.textContent = message;
+        errorModal.classList.remove('hidden');
+    } else {
+        // Fallback: use console or alert if modals don't exist
+        console.error('Error:', message);
+        alert('Error: ' + message);
+    }
 }
 
 function closeModal() {
