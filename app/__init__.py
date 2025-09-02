@@ -39,11 +39,6 @@ def create_app(config_class=Config):
         print(f"Frontend route /admin-login accessed, serving from {frontend_dir}")  # Debug print
         return send_from_directory(str(frontend_dir), 'admin-login.html')
     
-    @app.route('/seating')
-    def seating_chart():
-        print(f"Frontend route /seating accessed, serving from {frontend_dir}")  # Debug print
-        return send_from_directory(str(frontend_dir), 'seating.html')
-    
     @app.route('/voting')
     def voting_page():
         print(f"Frontend route /voting accessed, serving from {frontend_dir}")  # Debug print

@@ -221,12 +221,6 @@
                 </div>
             </header>
             
-            <!-- Seat Information Banner -->
-            <div id="seatInfoBanner" class="seat-info-banner" style="display: none;">
-                <div class="seat-info-title">🪑 Ghế của bạn</div>
-                <div class="seat-details" id="seatDetailsInfo"></div>
-            </div>
-            
             <!-- Ticket Input Section -->
             <div class="ticket-input-section">
                 <h3>🎫 Xác thực vé của bạn</h3>
@@ -250,7 +244,6 @@
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button id="backToSeating" class="btn btn-secondary">← Quay lại chọn ghế</button>
                 <button id="goToResults" class="btn btn-secondary">Xem kết quả 📊</button>
             </div>
         </div>
@@ -264,7 +257,6 @@
             </div>
             <div class="modal-body">
                 <p>Cảm ơn bạn đã bỏ phiếu cho: <strong id="votedContestant"></strong></p>
-                <p>Ghế: <strong id="votedSeat"></strong></p>
                 <p>Vé của bạn đã được sử dụng và không thể bỏ phiếu lại.</p>
             </div>
             <div class="modal-footer">
@@ -291,20 +283,12 @@
     
     <script>
         // Global variables
-        let selectedSeat = null;
         let validTicket = null;
         let contestants = [];
         let selectedContestant = null;
         
         // Initialize page
         window.addEventListener('DOMContentLoaded', function() {
-            // Check if coming from seating selection
-            const seatData = sessionStorage.getItem('selectedSeat');
-            if (seatData) {
-                selectedSeat = JSON.parse(seatData);
-                showSeatInfo();
-            }
-            
             loadContestants();
             setupEventListeners();
         });
@@ -316,21 +300,10 @@
                     verifyTicket();
                 }
             });
-            document.getElementById('backToSeating').addEventListener('click', () => {
-                window.location.href = '/seating';
-            });
             document.getElementById('goToResults').addEventListener('click', goToResults);
         }
         
-        function showSeatInfo() {
-            const banner = document.getElementById('seatInfoBanner');
-            const details = document.getElementById('seatDetailsInfo');
-            
-            if (selectedSeat) {
-                banner.style.display = 'block';
-                details.textContent = `${selectedSeat.section_code} - Hàng ${selectedSeat.seat_row} - Ghế ${selectedSeat.seat_number} (${selectedSeat.seat_code})`;
-            }
-        }
+
         
         async function verifyTicket() {
             const ticketCode = document.getElementById('ticketCode').value.trim().toUpperCase();
@@ -462,11 +435,6 @@
                     ticket_code: validTicket
                 };
                 
-                // Add seat information if available
-                if (selectedSeat) {
-                    voteData.seat_code = selectedSeat.seat_code;
-                }
-                
                 const response = await fetch('/api/vote', {
                     method: 'POST',
                     headers: {
@@ -478,12 +446,8 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Clear session data
-                    sessionStorage.removeItem('selectedSeat');
-                    
                     // Show success modal
                     document.getElementById('votedContestant').textContent = selectedContestant.name;
-                    document.getElementById('votedSeat').textContent = selectedSeat ? selectedSeat.seat_code : 'Không xác định';
                     document.getElementById('successModal').classList.remove('hidden');
                     
                     // Disable further voting
