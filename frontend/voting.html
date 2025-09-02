@@ -134,22 +134,6 @@
             animation: gradientShift 3s ease-in-out infinite;
         }
         
-        .contestants-section h2 {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 25px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            position: relative;
-            letter-spacing: 1px;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
-            animation: gradientShift 3s ease-in-out infinite;
-        }
-        
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -316,10 +300,6 @@
                 padding: 20px;
             }
             
-            .contestants-section h2 {
-                font-size: 1.8em;
-            }
-            
             .contestants-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
@@ -365,7 +345,6 @@
             
             <!-- Contestants Section -->
             <div class="contestants-section">
-                <h2>🎭 Choose Your Favorite Contestant</h2>
                 <div id="contestantsGrid" class="contestants-grid">
                     <div class="loading">Loading contestants...</div>
                 </div>
