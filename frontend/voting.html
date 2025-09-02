@@ -113,68 +113,153 @@
         
         .contestants-section {
             margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .contestants-section h2 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .contestants-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .contestants-section .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            font-style: italic;
         }
         
         .contestants-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
         }
         
         .contestant-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .contestant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .contestant-card:hover::before {
+            transform: scaleX(1);
         }
         
         .contestant-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
         .contestant-card.selected {
             border-color: #667eea;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+        
+        .contestant-card.selected::before {
+            transform: scaleX(1);
         }
         
         .contestant-image {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .contestant-card:hover .contestant-image {
+            transform: scale(1.05);
         }
         
         .contestant-name {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 12px;
             color: #333;
+            text-align: center;
         }
         
         .contestant-description {
             color: #666;
-            margin-bottom: 15px;
-            line-height: 1.4;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            text-align: center;
+            font-size: 1.05em;
         }
         
         .vote-button {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 1.05em;
             cursor: pointer;
             transition: all 0.3s ease;
             opacity: 0.6;
             cursor: not-allowed;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vote-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
         }
         
         .vote-button.enabled {
@@ -183,8 +268,12 @@
         }
         
         .vote-button.enabled:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .vote-button.enabled:hover::before {
+            left: 100%;
         }
         
         .action-buttons {
@@ -194,14 +283,51 @@
             margin-top: 30px;
         }
         
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1em;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+        }
+        
+        .error {
+            text-align: center;
+            padding: 30px;
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .input-group {
                 flex-direction: column;
                 align-items: stretch;
             }
             
+            .contestants-section {
+                padding: 20px;
+            }
+            
+            .contestants-section h2 {
+                font-size: 1.8em;
+            }
+            
             .contestants-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .contestant-card {
+                padding: 20px;
+            }
+            
+            .contestant-image {
+                height: 180px;
             }
             
             .action-buttons {
@@ -237,6 +363,7 @@
             <!-- Contestants Section -->
             <div class="contestants-section">
                 <h2>🎭 Choose Your Favorite Contestant</h2>
+                <p class="subtitle">Select the contestant you want to vote for</p>
                 <div id="contestantsGrid" class="contestants-grid">
                     <div class="loading">Loading contestants...</div>
                 </div>
