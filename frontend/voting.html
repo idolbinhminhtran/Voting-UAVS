@@ -6,41 +6,82 @@
     <title>Voting - The Vivid Dream UGT 25</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Voting specific styles */
+        /* Professional Voting Page Styles */
+        .voting-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .voting-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="20" cy="60" r="0.8" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .page-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 30px 0;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .page-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .page-subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
         .voting-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
         }
         
-        .seat-info-banner {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        .form-section {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.9);
         }
         
-        .seat-info-title {
-            font-size: 1.5em;
-            font-weight: 600;
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
             margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
-        .seat-details {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-        
-        .ticket-input-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
+        .section-description {
+            color: #666;
             margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            font-size: 1.1em;
+            line-height: 1.6;
         }
         
         .input-group {
@@ -59,56 +100,62 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: #555;
+            font-size: 1.05em;
         }
         
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border: 2px solid #e8ecf4;
-            border-radius: 10px;
+            border-radius: 15px;
             font-size: 16px;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
         }
         
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
         }
         
         .verify-btn {
-            padding: 12px 24px;
+            padding: 16px 32px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             font-weight: 600;
+            font-size: 1.05em;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         .verify-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
         }
         
         .ticket-status {
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
             font-weight: 500;
+            font-size: 1.05em;
         }
         
         .ticket-valid {
             background: rgba(40, 167, 69, 0.1);
             color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
+            border: 2px solid rgba(40, 167, 69, 0.3);
         }
         
         .ticket-invalid {
             background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.3);
+            border: 2px solid rgba(220, 53, 69, 0.3);
         }
         
         .contestants-section {
@@ -319,41 +366,39 @@
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="voting-container">
-            <header>
-                <div class="header-content">
-                    <h1>🗳️ The Vivid Dream Voting</h1>
-                    <p class="subtitle">UGT 25 - Vote for your favorite contestant</p>
-                    <div class="header-decoration"></div>
+<body class="voting-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">🗳️ The Vivid Dream Voting</h1>
+        <p class="page-subtitle">UGT 25 - Vote for your favorite contestant</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="voting-container">
+        <!-- Ticket Verification Section -->
+        <div class="form-section">
+            <h2 class="section-title">🎫 Verify Your Ticket</h2>
+            <p class="section-description">Enter your 8-character ticket code to unlock voting access</p>
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="ticketCode">Ticket Code:</label>
+                    <input type="text" id="ticketCode" placeholder="Enter 8-character ticket code" maxlength="8" style="text-transform: uppercase;">
                 </div>
-            </header>
-            
-            <!-- Ticket Input Section -->
-            <div class="ticket-input-section">
-                <h3>🎫 Verify Your Ticket</h3>
-                <div class="input-group">
-                    <div class="form-group">
-                        <label for="ticketCode">Ticket Code:</label>
-                        <input type="text" id="ticketCode" placeholder="Enter 8-character ticket code" maxlength="8" style="text-transform: uppercase;">
-                    </div>
-                    <button id="verifyTicket" class="verify-btn">Verify</button>
-                </div>
-                <div id="ticketStatus" class="ticket-status" style="display: none;"></div>
+                <button id="verifyTicket" class="verify-btn">Verify</button>
             </div>
-            
-            <!-- Contestants Section -->
-            <div class="contestants-section">
-                <div id="contestantsGrid" class="contestants-grid">
-                    <div class="loading">Loading contestants...</div>
-                </div>
+            <div id="ticketStatus" class="ticket-status" style="display: none;"></div>
+        </div>
+        
+        <!-- Contestants Section -->
+        <div class="contestants-section">
+            <div id="contestantsGrid" class="contestants-grid">
+                <div class="loading">Loading contestants...</div>
             </div>
-            
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <a href="/" class="btn btn-secondary">← Back to Home</a>
-            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="action-buttons">
+            <a href="/" class="btn btn-secondary">← Back to Home</a>
         </div>
     </div>
     
