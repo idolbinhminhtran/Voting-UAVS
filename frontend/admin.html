@@ -3,116 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - The Vivid Dream Voting</title>
+    <title>Admin Dashboard - The Vivid Dream</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Admin-specific enhancements */
+        /* Admin Dashboard Styles */
+        body {
+            background: var(--gray-50);
+        }
+
+        /* Admin Header */
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: var(--spacing-lg) 0;
+            margin-top: 72px;
+            position: sticky;
+            top: 72px;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Admin Navigation Tabs */
         .admin-tabs {
             display: flex;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 8px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            gap: var(--spacing-sm);
+            border-bottom: 2px solid var(--gray-200);
+            margin-top: var(--spacing-lg);
             overflow-x: auto;
         }
         
         .admin-tab {
-            padding: 12px 24px;
-            cursor: pointer;
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: none;
             border: none;
-            background: transparent;
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 3px solid transparent;
+            color: var(--gray-600);
             font-weight: 500;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
             white-space: nowrap;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .admin-tab::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-        
-        .admin-tab:hover::before {
-            left: 100%;
         }
         
         .admin-tab:hover {
-            color: rgba(255, 255, 255, 0.9);
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
+            color: var(--primary-color);
+            background: var(--gray-50);
         }
         
         .admin-tab.active {
-            color: white;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transform: translateY(-2px);
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: white;
         }
-        
+
+        .admin-tab-icon {
+            margin-right: var(--spacing-sm);
+        }
+
+        /* Dashboard Content */
         .admin-content {
             display: none;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: fadeIn 0.4s ease-out;
+            padding: var(--spacing-2xl) 0;
         }
         
         .admin-content.active {
             display: block;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Enhanced header */
-        header {
-            margin-bottom: 40px;
-        }
-        
-        header h1 {
-            font-size: 3.2em;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #fff, #f0f8ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
-        }
-        
-        /* Enhanced stat cards */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px 25px;
-            border-radius: 16px;
-            box-shadow: 
-                0 10px 25px rgba(0,0,0,0.1),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
+            transition: all var(--transition-base);
             position: relative;
             overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
         
         .stat-card::before {
@@ -121,454 +135,688 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            height: 4px;
+            background: var(--primary-gradient);
         }
-        
-        .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gray-100);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+            font-size: 1.5rem;
+            color: var(--primary-color);
         }
-        
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-        
-        .stat-number {
-            font-size: 3em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1;
         }
         
         .stat-label {
-            color: #666;
-            font-size: 1.1em;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            position: relative;
-            z-index: 1;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        
-        /* Enhanced forms */
-        .contestant-form, .voting-status-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 
-                0 10px 25px rgba(0,0,0,0.1),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .contestant-form h3, .voting-status-card h3 {
-            color: #333;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.4em;
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 0.875rem;
             font-weight: 600;
+            margin-top: var(--spacing-md);
         }
-        
-        .form-group {
-            margin-bottom: 20px;
+
+        .stat-change.positive {
+            color: var(--success-color);
         }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 1.05em;
-            letter-spacing: 0.3px;
+
+        .stat-change.negative {
+            color: var(--danger-color);
         }
-        
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e8ecf4;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
+            margin-bottom: var(--spacing-2xl);
         }
-        
-        .form-group input:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-1px);
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
         }
-        
-        /* Enhanced danger zone */
-        .danger-zone {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 248, 0.95));
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(220, 53, 69, 0.15);
-            border-radius: 20px;
-            padding: 30px;
-            margin-top: 40px;
-            position: relative;
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        /* Results Table */
+        .results-table-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
             overflow: hidden;
-            box-shadow: 
-                0 15px 35px rgba(220, 53, 69, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
+        }
+
+        .table-header {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--gray-50);
+            padding: var(--spacing-md) var(--spacing-lg);
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .contestant-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .contestant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .contestant-rank {
+            width: 32px;
+            height: 32px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+
+        .contestant-rank.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+        }
+
+        .contestant-rank.silver {
+            background: linear-gradient(135deg, #C0C0C0, #808080);
+            color: white;
+        }
+
+        .contestant-rank.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+            color: white;
+        }
+
+        .vote-bar {
+            position: relative;
+            background: var(--gray-100);
+            height: 8px;
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-top: var(--spacing-sm);
         }
         
-        .danger-zone:hover {
+        .vote-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: width 1s ease-out;
+        }
+
+        /* Action Buttons */
+        .action-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-lg);
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+            color: var(--gray-700);
+        }
+
+        .action-button:hover {
+            background: white;
+            border-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 
-                0 20px 40px rgba(220, 53, 69, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-md);
         }
-        
+
+        .action-button-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .action-button-text {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+            border: 2px solid var(--danger-color);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-top: var(--spacing-3xl);
+            position: relative;
+        }
+
         .danger-zone::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #dc3545, #ff6b6b, #ffc107, #ff6b6b, #dc3545);
-            background-size: 200% 100%;
-            animation: danger-gradient 3s linear infinite;
+            height: 4px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--danger-color),
+                var(--danger-color) 10px,
+                transparent 10px,
+                transparent 20px
+            );
         }
-        
-        @keyframes danger-gradient {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        
-        .danger-zone-header {
+
+        .danger-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
-        
-        .danger-zone-icon {
-            font-size: 2.5em;
-            margin-right: 15px;
-            background: linear-gradient(135deg, #dc3545, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: warning-pulse 2s ease-in-out infinite alternate;
+
+        .danger-icon {
+            font-size: 2rem;
+            color: var(--danger-color);
         }
-        
-        @keyframes warning-pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-        
-        .danger-zone h3 {
-            color: #dc3545;
-            margin: 0;
-            font-size: 1.5em;
+
+        .danger-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            color: var(--danger-color);
+            margin: 0;
         }
-        
-        .danger-zone p {
-            color: #666;
-            margin-bottom: 25px;
-            font-weight: 500;
-            font-size: 1.05em;
-            line-height: 1.5;
-            padding: 15px 20px;
-            background: rgba(255, 193, 7, 0.1);
-            border-left: 4px solid #ffc107;
-            border-radius: 8px;
+
+        .danger-description {
+            color: var(--gray-700);
+            margin-bottom: var(--spacing-xl);
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--warning-color);
         }
-        
+
         .danger-actions {
             display: flex;
-            gap: 15px;
+            gap: var(--spacing-md);
             flex-wrap: wrap;
+        }
+
+        /* Ticket Stats */
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .ticket-stat-card {
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-100);
+        }
+
+        .ticket-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: var(--spacing-lg);
+        }
+
+        .ticket-item {
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--gray-100);
         }
-        
-        .danger-zone .btn {
-            position: relative;
-            overflow: hidden;
+
+        .ticket-item:hover {
+            background: var(--gray-50);
+        }
+
+        .ticket-code {
+            font-family: monospace;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: var(--gray-900);
         }
-        
-        .danger-zone .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+
+        .ticket-status {
+            font-size: 0.875rem;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
         }
-        
-        .danger-zone .btn:hover::before {
-            left: 100%;
+
+        .ticket-status.used {
+            background: var(--success-bg);
+            color: var(--success-color);
         }
-        
-        .danger-zone .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+
+        .ticket-status.unused {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            border: none;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c82333, #bd2130);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-            border: none;
-            color: #212529;
-        }
-        
-        .btn-warning:hover {
-            background: linear-gradient(135deg, #e0a800, #d39e00);
-        }
-        
-        /* Ticket actions */
-        .ticket-actions {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 
-                0 10px 25px rgba(0,0,0,0.1),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .ticket-stats {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 
-                0 10px 25px rgba(0,0,0,0.1),
-                inset 0 1px 0 rgba(255,255,255,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Section headers */
-        .admin-content h2 {
-            color: white;
-            font-size: 2.2em;
-            margin-bottom: 25px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-        
-        /* Status indicators */
-        .status-indicator {
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .status-open {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-        
-        .status-closed {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-        
-        /* Responsive adjustments */
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .admin-tabs {
+            .admin-header-content {
                 flex-direction: column;
-                gap: 5px;
+                gap: var(--spacing-md);
+                text-align: center;
             }
             
+            .admin-tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            header h1 {
-                font-size: 2.5em;
-            }
-            
-            .admin-content h2 {
-                font-size: 1.8em;
             }
             
             .danger-actions {
                 flex-direction: column;
-                gap: 10px;
             }
-            
-            .danger-zone .btn {
-                width: 100%;
-            }
-            
-            .danger-zone-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .danger-zone-icon {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
+
+            .action-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .stat-card {
-                padding: 20px 15px;
-            }
-            
-            .stat-number {
-                font-size: 2.5em;
-            }
-            
-            .contestant-form, .voting-status-card, .ticket-actions, .ticket-stats {
-                padding: 20px 15px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <h1>The Vivid Dream Voting</h1>
-                <p class="subtitle">Admin Panel - Manage voting system and monitor results</p>
-                <div class="header-decoration"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-star"></i>
+                The Vivid Dream
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="/" class="navbar-link">Home</a></li>
+                <li><a href="/voting" class="navbar-link">Vote Now</a></li>
+                <li><a href="/admin-login" class="navbar-link">Admin</a></li>
+            </ul>
             </div>
-        </header>
+    </nav>
 
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container admin-header-content">
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <div class="admin-user">
+                <div class="user-info">
+                    <div class="user-name" id="adminUsername">Admin User</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Admin Tabs -->
         <div class="admin-tabs">
-            <button class="admin-tab active" onclick="showTab('dashboard')">Dashboard</button>
-            <button class="admin-tab" onclick="showTab('results')">Results</button>
-            <button class="admin-tab" onclick="showTab('tickets')">Tickets</button>
+            <button class="admin-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-chart-line admin-tab-icon"></i>
+                Dashboard
+            </button>
+            <button class="admin-tab" onclick="showTab('results')">
+                <i class="fas fa-trophy admin-tab-icon"></i>
+                Results
+            </button>
+            <button class="admin-tab" onclick="showTab('tickets')">
+                <i class="fas fa-ticket-alt admin-tab-icon"></i>
+                Tickets
+            </button>
+            <button class="admin-tab" onclick="showTab('settings')">
+                <i class="fas fa-cog admin-tab-icon"></i>
+                Settings
+            </button>
         </div>
 
         <!-- Dashboard Tab -->
         <div id="dashboard" class="admin-content active">
-            <h2>System Overview</h2>
-            
+            <!-- Statistics -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" id="totalTickets">-</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="stat-value" id="totalTickets">-</div>
                     <div class="stat-label">Total Tickets</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>100% Generated</span>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="usedTickets">-</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="usedTickets">-</div>
                     <div class="stat-label">Used Tickets</div>
+                    <div class="stat-change positive" id="usageRate">
+                        <i class="fas fa-chart-line"></i>
+                        <span>0% Usage Rate</span>
+                </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="unusedTickets">-</div>
-                    <div class="stat-label">Unused Tickets</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalVotes">-</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <div class="stat-value" id="totalVotes">-</div>
                     <div class="stat-label">Total Votes</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-users"></i>
+                        <span>Active Voting</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="votingStatus">OPEN</div>
+                    <div class="stat-label">Voting Status</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-circle"></i>
+                        <span>Live Now</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="voting-status-card">
-                <h3>Voting Status</h3>
-                <div id="votingStatusAdmin" class="status-indicator">
-                    <span id="statusTextAdmin">Checking...</span>
+            <!-- Quick Actions -->
+            <div class="action-card">
+                <h3 class="mb-3">Quick Actions</h3>
+                <div class="action-grid">
+                    <a href="#" class="action-button" onclick="exportData('tickets')">
+                        <i class="fas fa-download action-button-icon"></i>
+                        <span class="action-button-text">Export Tickets</span>
+                    </a>
+                    <a href="#" class="action-button" onclick="exportData('results')">
+                        <i class="fas fa-file-excel action-button-icon"></i>
+                        <span class="action-button-text">Export Results</span>
+                    </a>
+                    <a href="#" class="action-button" onclick="refreshStats()">
+                        <i class="fas fa-sync-alt action-button-icon"></i>
+                        <span class="action-button-text">Refresh Stats</span>
+                    </a>
+                    <a href="#" class="action-button" onclick="showTab('settings')">
+                        <i class="fas fa-cogs action-button-icon"></i>
+                        <span class="action-button-text">System Settings</span>
+                    </a>
                 </div>
-                <p>Current Time: <span id="currentTimeAdmin"></span></p>
             </div>
 
-            <div class="danger-zone">
-                <div class="danger-zone-header">
-                    <div class="danger-zone-icon">⚠️</div>
-                    <h3>Danger Zone</h3>
+            <!-- Live Vote Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Live Voting Progress</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="refreshChart()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
                 </div>
-                <p>⚡ These actions cannot be undone. Use with extreme caution as they will permanently affect the voting system.</p>
-                <div class="danger-actions">
-                    <button id="resetVoting" class="btn btn-danger">🔄 Reset All Voting</button>
-                    <button id="generateTickets" class="btn btn-warning">🎫 Generate New Tickets</button>
+                <div id="votingChart" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-muted">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        Loading chart data...
+                    </div>
                 </div>
             </div>
         </div>
 
-
-
         <!-- Results Tab -->
         <div id="results" class="admin-content">
-            <h2>Voting Results</h2>
-            <div id="resultsContainerAdmin" class="results-container">
-                <div class="loading">Loading results...</div>
+            <div class="results-table-container">
+                <div class="table-header">
+                    <h3 class="m-0">Voting Results</h3>
+                    <button class="btn btn-primary btn-sm" onclick="refreshResults()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Results
+                    </button>
+                </div>
+                <div id="resultsTableContainer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Contestant</th>
+                                <th>Votes</th>
+                                <th>Percentage</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading results...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <!-- Tickets Tab -->
         <div id="tickets" class="admin-content">
-            <h2>Ticket Management</h2>
-            
-            <div class="ticket-actions">
-                <button id="exportTickets" class="btn btn-secondary">Export All Tickets</button>
-                <button id="exportUsedTickets" class="btn btn-secondary">Export Used Tickets</button>
-                <button id="exportUnusedTickets" class="btn btn-secondary">Export Unused Tickets</button>
+            <div class="ticket-grid">
+                <div class="ticket-stat-card">
+                    <h3>Ticket Overview</h3>
+                    <div class="stats-grid" style="margin-top: var(--spacing-lg);">
+                        <div>
+                            <div class="stat-value" id="ticketTotalGenerated" style="font-size: 2rem;">-</div>
+                            <div class="stat-label">Total Generated</div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="ticketUsed" style="font-size: 2rem; color: var(--success-color);">-</div>
+                            <div class="stat-label">Used</div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="ticketUnused" style="font-size: 2rem; color: var(--warning-color);">-</div>
+                            <div class="stat-label">Unused</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary w-100" onclick="syncPredefinedTickets()">
+                            <i class="fas fa-sync-alt"></i>
+                            Sync Pre-defined Tickets
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ticket-stat-card">
+                    <h3>Recent Ticket Activity</h3>
+                    <div class="ticket-list">
+                        <div class="ticket-item">
+                            <span class="ticket-code">ABCD1234</span>
+                            <span class="ticket-status used">Used</span>
+                        </div>
+                        <div class="ticket-item">
+                            <span class="ticket-code">EFGH5678</span>
+                            <span class="ticket-status unused">Unused</span>
+                        </div>
+                        <div class="ticket-item">
+                            <span class="ticket-code">IJKL9012</span>
+                            <span class="ticket-status used">Used</span>
+                        </div>
+                        <div class="ticket-item">
+                            <span class="ticket-code">MNOP3456</span>
+                            <span class="ticket-status unused">Unused</span>
+                        </div>
+                    </div>
             </div>
 
-            <div class="ticket-stats">
-                <h3>Ticket Statistics</h3>
-                <div id="ticketStatsContainer">
-                    <div class="loading">Loading ticket statistics...</div>
+                <div class="ticket-stat-card">
+                    <h3>Export Options</h3>
+                    <div class="d-flex flex-column gap-2">
+                        <button class="btn btn-secondary" onclick="exportTickets('all')">
+                            <i class="fas fa-download"></i>
+                            Export All Tickets
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportTickets('used')">
+                            <i class="fas fa-check-circle"></i>
+                            Export Used Tickets
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportTickets('unused')">
+                            <i class="fas fa-times-circle"></i>
+                            Export Unused Tickets
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="admin-content">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="mb-4">System Settings</h3>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle alert-icon"></i>
+                        <div>
+                            <strong>Voting Status:</strong> <span id="votingStatusText">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Voting Status Control</label>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success" onclick="toggleVoting(true)">
+                                <i class="fas fa-play"></i>
+                                Open Voting
+                            </button>
+                            <button class="btn btn-danger" onclick="toggleVoting(false)">
+                                <i class="fas fa-stop"></i>
+                                Close Voting
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone">
+                <div class="danger-header">
+                    <i class="fas fa-exclamation-triangle danger-icon"></i>
+                    <h2 class="danger-title">Danger Zone</h2>
+                </div>
+                <p class="danger-description">
+                    <i class="fas fa-warning"></i> 
+                    <strong>Warning:</strong> These actions are irreversible and will permanently affect the voting system. 
+                    Please ensure you have proper backups before proceeding.
+                </p>
+                <div class="danger-actions">
+                    <button class="btn btn-danger" onclick="confirmResetVoting()">
+                        <i class="fas fa-trash-alt"></i>
+                        Reset All Voting Data
+                    </button>
+                    <button class="btn btn-warning" onclick="syncPredefinedTickets()">
+                        <i class="fas fa-sync-alt"></i>
+                        Re-sync Pre-defined Tickets
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal hidden">
-        <div class="modal-content">
+    <div class="modal-backdrop" id="confirmBackdrop"></div>
+    <div class="modal" id="confirmModal">
             <div class="modal-header">
-                <h3 id="confirmTitle">Confirm Action</h3>
+            <h3 class="modal-title" id="confirmTitle">Confirm Action</h3>
             </div>
             <div class="modal-body">
                 <p id="confirmMessage"></p>
             </div>
             <div class="modal-footer">
-                <button id="confirmYes" class="btn btn-danger">Yes, Continue</button>
-                <button id="confirmNo" class="btn btn-secondary">Cancel</button>
-            </div>
+            <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirmButton">Confirm</button>
         </div>
     </div>
 
-    <script src="script.js?v=1.1"></script>
+    <!-- Scripts -->
     <script>
-        // Check authentication on page load
+        // Check authentication on load
         window.addEventListener('DOMContentLoaded', async function() {
             try {
                 const response = await fetch('/api/admin/status', {
@@ -577,29 +825,15 @@
                 const data = await response.json();
                 
                 if (!data.authenticated) {
-                    // Redirect to login if not authenticated
                     window.location.href = '/admin-login';
                     return;
                 }
                 
-                // Show username in header if authenticated
-                document.querySelector('.subtitle').textContent = `Welcome, ${data.username}! Manage voting system and monitor results`;
+                // Update username
+                document.getElementById('adminUsername').textContent = data.username || 'Admin';
                 
-                // Add logout button
-                const headerContent = document.querySelector('.header-content');
-                const logoutBtn = document.createElement('button');
-                logoutBtn.textContent = 'Logout';
-                logoutBtn.className = 'btn btn-secondary';
-                logoutBtn.style.position = 'absolute';
-                logoutBtn.style.top = '20px';
-                logoutBtn.style.right = '20px';
-                logoutBtn.addEventListener('click', logout);
-                headerContent.style.position = 'relative';
-                headerContent.appendChild(logoutBtn);
-                
-                // Load initial data and initialize panel
+                // Load initial data
                 loadDashboardData();
-                initializeAdminPanel();
                 
             } catch (error) {
                 console.error('Authentication check failed:', error);
@@ -607,43 +841,21 @@
             }
         });
         
-        async function logout() {
-            try {
-                const response = await fetch('/api/admin/logout', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    window.location.href = '/admin-login';
-                } else {
-                    alert('Logout failed');
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Logout failed');
-            }
-        }
-
-        // Admin-specific functionality
+        // Tab switching
         function showTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.admin-content').forEach(content => {
-                content.classList.remove('active');
-            });
+            // Update tabs
             document.querySelectorAll('.admin-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
             
-            // Load data for the tab
-            loadTabData(tabName);
-        }
-        
-        function loadTabData(tabName) {
+            // Update content
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            
+            // Load tab-specific data
             switch(tabName) {
                 case 'dashboard':
                     loadDashboardData();
@@ -657,54 +869,262 @@
             }
         }
         
-        function loadDashboardData() {
-            // Load statistics and status
-            fetch('/api/results')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('totalVotes').textContent = data.total_votes || 0;
-                    document.getElementById('votingStatusAdmin').innerHTML = 
-                        `<span class="${data.voting_open ? 'status-open' : 'status-closed'}">${data.voting_open ? 'Voting Open' : 'Voting Closed'}</span>`;
-                    document.getElementById('currentTimeAdmin').textContent = new Date(data.current_time).toLocaleString();
-                });
-            
-            // Load ticket statistics
-            loadTicketStats();
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load stats
+                const [resultsRes, ticketsRes] = await Promise.all([
+                    fetch('/api/results'),
+                    fetch('/api/ticket/stats', { credentials: 'include' })
+                ]);
+                
+                const results = await resultsRes.json();
+                const tickets = await ticketsRes.json();
+                
+                // Update stats
+                document.getElementById('totalVotes').textContent = results.total_votes || 0;
+                document.getElementById('votingStatus').textContent = results.voting_open ? 'OPEN' : 'CLOSED';
+                
+                document.getElementById('totalTickets').textContent = tickets.total_tickets || 0;
+                document.getElementById('usedTickets').textContent = tickets.used_tickets || 0;
+                
+                // Calculate usage rate
+                const usageRate = tickets.total_tickets > 0 
+                    ? Math.round((tickets.used_tickets / tickets.total_tickets) * 100) 
+                    : 0;
+                document.getElementById('usageRate').innerHTML = 
+                    `<i class="fas fa-chart-line"></i> <span>${usageRate}% Usage Rate</span>`;
+                
+                // Update voting status style
+                const statusElement = document.querySelector('#votingStatus').parentElement;
+                if (results.voting_open) {
+                    statusElement.querySelector('.stat-change').className = 'stat-change positive';
+                } else {
+                    statusElement.querySelector('.stat-change').className = 'stat-change negative';
+                    statusElement.querySelector('.stat-change span').textContent = 'Closed';
+                }
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
         }
-        
+
+        // Load results
+        async function loadResults() {
+            try {
+                const response = await fetch('/api/results');
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const tbody = document.getElementById('resultsTableBody');
+                    tbody.innerHTML = data.results.map((result, index) => {
+                        // API returns vote_count and percentage fields from the voting_results view
+                        const voteCount = typeof result.vote_count !== 'undefined' ? result.vote_count : (result.votes || 0);
+                        const percentage = typeof result.percentage !== 'undefined'
+                            ? Number(result.percentage)
+                            : (data.total_votes > 0 ? Math.round((voteCount / data.total_votes) * 100) : 0);
+                        
+                        let rankClass = '';
+                        if (index === 0) rankClass = 'gold';
+                        else if (index === 1) rankClass = 'silver';
+                        else if (index === 2) rankClass = 'bronze';
+                        
+                        return `
+                            <tr>
+                                <td>
+                                    <div class="contestant-rank ${rankClass}">${index + 1}</div>
+                                </td>
+                                <td>
+                                    <div class="contestant-cell">
+                                        <img src="${result.image_url || '/images/default-avatar.svg'}" 
+                                             alt="${result.name}" 
+                                             class="contestant-avatar"
+                                             onerror="this.src='/images/default-avatar.svg'">
+                                        <div>
+                                            <div class="fw-semibold">${result.name}</div>
+                                            <div class="text-muted" style="font-size: 0.875rem;">
+                                                ${result.description || 'Contestant'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="fw-bold">${voteCount}</td>
+                                <td>${percentage}%</td>
+                                <td style="width: 200px;">
+                                    <div class="vote-bar">
+                                        <div class="vote-bar-fill" style="width: ${percentage}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    document.getElementById('resultsTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted p-4">
+                                No voting results available yet
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading results:', error);
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/admin/logout', {
+                    method: 'POST',
+                credentials: 'include'
+                });
+                
+                if (response.ok) {
+                        window.location.href = '/admin-login';
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+
+        // Refresh functions
+        function refreshStats() {
+            loadDashboardData();
+        }
+
+        function refreshResults() {
+            loadResults();
+        }
+
+        function refreshChart() {
+            // Placeholder for chart refresh
+            document.getElementById('votingChart').innerHTML = `
+                <div class="text-muted">
+                    <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    Chart refreshed!
+                </div>
+            `;
+        }
+
+        // Confirmation modal
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = function() {
+                closeConfirmModal();
+                onConfirm();
+            };
+            document.getElementById('confirmBackdrop').classList.add('show');
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmBackdrop').classList.remove('show');
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // Danger zone actions
+        function confirmResetVoting() {
+            showConfirmModal(
+                'Reset All Voting Data',
+                'Are you sure you want to reset all voting data? This will delete all votes and cannot be undone.',
+                resetVoting
+            );
+        }
+
+        async function resetVoting() {
+            // Implementation for resetting voting
+            alert('Voting data reset (not implemented in this demo)');
+        }
+
+        // Export functions
+        function exportData(type) {
+            alert(`Exporting ${type} data (not implemented in this demo)`);
+        }
+
+        function exportTickets(type) {
+            alert(`Exporting ${type} tickets (not implemented in this demo)`);
+        }
+
+        // Sync pre-defined tickets
+        async function syncPredefinedTickets() {
+            try {
+                const response = await fetch('/api/admin/sync-predefined-tickets', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Success: ${data.message}\nTotal pre-defined: ${data.total_predefined}\nNewly synced: ${data.newly_synced}`);
+                    loadTicketStats(); // Refresh ticket stats
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error syncing tickets:', error);
+                alert('Failed to sync pre-defined tickets');
+            }
+        }
+
+        // Toggle voting
+        async function toggleVoting(open) {
+            try {
+                const endpoint = open ? '/api/admin/voting-open' : '/api/admin/voting-close';
+                const response = await fetch(endpoint, { method: 'POST', credentials: 'include' });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Request failed');
+                await refreshVotingStatus();
+                alert(data.message || (open ? 'Voting opened' : 'Voting closed'));
+            } catch (e) {
+                console.error('Toggle voting error:', e);
+                alert('Failed to update voting status');
+            }
+        }
+
+        async function refreshVotingStatus() {
+            try {
+                const response = await fetch('/api/admin/voting-status', { credentials: 'include' });
+                const data = await response.json();
+                const el = document.getElementById('votingStatusText');
+                if (el) el.innerHTML = data.voting_open ? '<strong>OPEN</strong>' : '<strong>CLOSED</strong>';
+            } catch (e) {
+                const el = document.getElementById('votingStatusText');
+                if (el) el.textContent = 'Unknown';
+            }
+        }
+
+        // Load status at startup
+        refreshVotingStatus();
+
+        // Load ticket stats (placeholder)
         function loadTicketStats() {
             fetch('/api/ticket/stats', {
                 credentials: 'include'
             })
-                .then(response => {
-                    if (response.status === 401) {
-                        // Not authenticated, redirect to login
-                        window.location.href = '/admin-login';
-                        return;
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    if (data) {
-                        document.getElementById('totalTickets').textContent = data.total_tickets || 0;
-                        document.getElementById('usedTickets').textContent = data.used_tickets || 0;
-                        document.getElementById('unusedTickets').textContent = data.unused_tickets || 0;
-                    }
+                    if (!data) return;
+                    const total = data.total_tickets ?? 0;
+                    const used = data.used_tickets ?? 0;
+                    const unused = data.unused_tickets ?? Math.max(total - used, 0);
+
+                    const setText = (id, value) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = value;
+                    };
+
+                    setText('ticketTotalGenerated', total);
+                    setText('ticketUsed', used);
+                    setText('ticketUnused', unused);
                 })
-                .catch(error => {
-                    console.error('Error loading ticket stats:', error);
-                    document.getElementById('totalTickets').textContent = '-';
-                    document.getElementById('usedTickets').textContent = '-';
-                    document.getElementById('unusedTickets').textContent = '-';
+                .catch(err => {
+                    console.error('Error loading ticket overview:', err);
                 });
-        }
-        
-        // Initialize admin panel (moved to main DOMContentLoaded handler above)
-        function initializeAdminPanel() {
-            // Add event listeners for admin actions
-            document.getElementById('resetVoting').addEventListener('click', confirmResetVoting);
-            document.getElementById('generateTickets').addEventListener('click', generateNewTickets);
         }
     </script>
 </body>
 </html>
+

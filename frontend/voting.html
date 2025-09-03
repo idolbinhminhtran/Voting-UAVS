@@ -3,449 +3,622 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voting - The Vivid Dream UGT 25</title>
+    <title>Vote Now - The Vivid Dream UGT 25</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Professional Voting Page Styles */
-        .voting-page {
+        /* Page Background */
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow-x: hidden;
         }
-        
-        .voting-page::before {
+
+        /* Page Header */
+        .page-header {
+            background: var(--primary-gradient);
+            padding: var(--spacing-3xl) 0;
+            margin-top: 72px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+        }
+
+        .page-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: var(--spacing-md);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            font-weight: 300;
+            animation: fadeIn 0.6s ease-out 0.2s both;
+        }
+
+        /* Voting Process Steps */
+        .voting-steps {
+            display: flex;
+            justify-content: center;
+            margin: calc(var(--spacing-3xl) * -1) auto var(--spacing-3xl);
+            position: relative;
+            z-index: 10;
+        }
+
+        .steps-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            padding: var(--spacing-xl);
+            display: flex;
+            gap: var(--spacing-2xl);
+            align-items: center;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: calc(var(--spacing-2xl) * -1 + var(--spacing-md));
+            width: calc(var(--spacing-2xl) - var(--spacing-md) * 2);
+            height: 2px;
+            background: var(--gray-200);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .step.active .step-number {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(94, 58, 238, 0.3);
+        }
+
+        .step.completed .step-number {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .step.completed::after {
+            background: var(--success-color);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-200);
+            color: var(--gray-500);
+            font-weight: 700;
+            font-size: 1.25rem;
+            transition: all var(--transition-base);
+        }
+
+        .step-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Ticket Verification Section */
+        .ticket-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+            animation: fadeIn 0.6s ease-out 0.4s both;
+        }
+
+        .ticket-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .ticket-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .ticket-title {
+            flex: 1;
+        }
+
+        .ticket-title h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .ticket-title p {
+            margin: 0;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .ticket-input-group {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: flex-end;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .ticket-input-wrapper {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .ticket-input {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: var(--spacing-lg);
+            border: 3px solid var(--gray-200);
+            transition: all var(--transition-base);
+        }
+
+        .ticket-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(94, 58, 238, 0.1);
+        }
+
+        .ticket-status {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-weight: 500;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .ticket-status.valid {
+            background: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .ticket-status.invalid {
+            background: var(--danger-bg);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Contestants Section */
+        .contestants-section {
+            animation: fadeIn 0.6s ease-out 0.6s both;
+        }
+
+        .contestants-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .contestants-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contestants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .contestant-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contestant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .contestant-card.selected {
+            box-shadow: 0 0 0 4px var(--primary-color);
+            transform: translateY(-8px);
+        }
+
+        .contestant-card.selected::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="20" cy="60" r="0.8" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            background: var(--primary-gradient);
+            opacity: 0.05;
+            z-index: 1;
         }
-        
-        .page-header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            padding: 30px 0;
-            text-align: center;
+
+        .contestant-card.selected .selection-badge {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .selection-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--primary-gradient);
             color: white;
-            position: relative;
-            z-index: 2;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .page-title {
-            font-size: 2.5em;
-            font-weight: 800;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .page-subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        .voting-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .form-section {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(30px);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-        }
-        
-        .section-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0);
+            transition: all var(--transition-base);
         }
-        
-        .section-description {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 15px;
-            align-items: end;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            flex: 1;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-            font-size: 1.05em;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid #e8ecf4;
-            border-radius: 15px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            background: white;
-        }
-        
-        .verify-btn {
-            padding: 16px 32px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-weight: 600;
-            font-size: 1.05em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        
-        .verify-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-        }
-        
-        .ticket-status {
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            font-weight: 500;
-            font-size: 1.05em;
-        }
-        
-        .ticket-valid {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 2px solid rgba(40, 167, 69, 0.3);
-        }
-        
-        .ticket-invalid {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 2px solid rgba(220, 53, 69, 0.3);
-        }
-        
-        .contestants-section {
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(102, 126, 234, 0.1);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .contestants-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease-in-out infinite;
-        }
-        
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .contestants-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-        
-        .contestant-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            border: 3px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .contestant-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .contestant-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .contestant-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .contestant-card.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-        }
-        
-        .contestant-card.selected::before {
-            transform: scaleX(1);
-        }
-        
+
         .contestant-image {
             width: 100%;
-            height: 220px;
+            height: 280px;
             object-fit: cover;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            transition: all var(--transition-base);
         }
-        
+
         .contestant-card:hover .contestant-image {
             transform: scale(1.05);
         }
-        
+
+        .contestant-info {
+            padding: var(--spacing-xl);
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contestant-number {
+            display: inline-block;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+
         .contestant-name {
-            font-size: 1.4em;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 12px;
-            color: #333;
-            text-align: center;
+            margin-bottom: var(--spacing-sm);
+            color: var(--gray-900);
         }
-        
+
         .contestant-description {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            text-align: center;
-            font-size: 1.05em;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-lg);
+            flex: 1;
         }
-        
+
         .vote-button {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            padding: var(--spacing-md);
             border: none;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             font-weight: 600;
-            font-size: 1.05em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0.6;
             cursor: not-allowed;
-            position: relative;
-            overflow: hidden;
+            transition: all var(--transition-base);
         }
-        
-        .vote-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
+
         .vote-button.enabled {
-            opacity: 1;
+            background: var(--primary-gradient);
+            color: white;
             cursor: pointer;
         }
-        
+
         .vote-button.enabled:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(94, 58, 238, 0.3);
         }
-        
-        .vote-button.enabled:hover::before {
-            left: 100%;
+
+        /* Submit Section */
+        .submit-section {
+            text-align: center;
+            padding: var(--spacing-3xl);
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-2xl);
         }
-        
-        .action-buttons {
+
+        .submit-button {
+            font-size: 1.25rem;
+            padding: var(--spacing-lg) var(--spacing-3xl);
+            box-shadow: 0 8px 24px rgba(94, 58, 238, 0.3);
+        }
+
+        .submit-button:disabled {
+            background: var(--gray-300);
+            box-shadow: none;
+        }
+
+        /* Loading State */
+        .loading-container {
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            margin-top: 30px;
+            padding: var(--spacing-3xl);
+            gap: var(--spacing-lg);
         }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 1.1em;
-            font-style: italic;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            border: 2px dashed rgba(102, 126, 234, 0.3);
+
+        .loading-text {
+            color: var(--gray-600);
+            font-size: 1.125rem;
         }
-        
-        .error {
-            text-align: center;
-            padding: 30px;
-            color: #dc3545;
-            background: rgba(220, 53, 69, 0.1);
-            border-radius: 15px;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-        
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .input-group {
+            .steps-container {
                 flex-direction: column;
-                align-items: stretch;
+                gap: var(--spacing-lg);
+                padding: var(--spacing-lg);
             }
-            
-            .contestants-section {
-                padding: 20px;
+
+            .step::after {
+                display: none;
             }
-            
+
+            .ticket-input-group {
+                flex-direction: column;
+            }
+
+            .ticket-input-wrapper {
+                max-width: 100%;
+            }
+
             .contestants-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
-            
-            .contestant-card {
-                padding: 20px;
-            }
-            
-            .contestant-image {
-                height: 180px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
+
+            .page-title {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
-<body class="voting-page">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-star"></i>
+                The Vivid Dream
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="/" class="navbar-link">Home</a></li>
+                <li><a href="/voting" class="navbar-link">Vote Now</a></li>
+                <li><a href="/admin-login" class="navbar-link">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <!-- Page Header -->
     <div class="page-header">
-        <h1 class="page-title">🗳️ The Vivid Dream Voting</h1>
-        <p class="page-subtitle">UGT 25 - Vote for your favorite contestant</p>
+        <div class="container page-header-content">
+            <h1 class="page-title">Cast Your Vote</h1>
+            <p class="page-subtitle">Select your favorite contestant for The Vivid Dream UGT 25</p>
+        </div>
     </div>
 
     <!-- Main Content -->
-    <div class="voting-container">
-        <!-- Ticket Verification Section -->
-        <div class="form-section">
-            <h2 class="section-title">🎫 Verify Your Ticket</h2>
-            <p class="section-description">Enter your 8-character ticket code to unlock voting access</p>
-            <div class="input-group">
-                <div class="form-group">
-                    <label for="ticketCode">Ticket Code:</label>
-                    <input type="text" id="ticketCode" placeholder="Enter 8-character ticket code" maxlength="8" style="text-transform: uppercase;">
+    <div class="container">
+        <!-- Voting Steps -->
+        <div class="voting-steps">
+            <div class="steps-container">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <span class="step-label">Step 1</span>
+                        <span class="step-title">Verify Ticket</span>
+                    </div>
                 </div>
-                <button id="verifyTicket" class="verify-btn">Verify</button>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <span class="step-label">Step 2</span>
+                        <span class="step-title">Choose Contestant</span>
+                    </div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <span class="step-label">Step 3</span>
+                        <span class="step-title">Submit Vote</span>
+                    </div>
+                </div>
             </div>
-            <div id="ticketStatus" class="ticket-status" style="display: none;"></div>
         </div>
-        
+
+        <!-- Ticket Verification -->
+        <div class="ticket-section">
+            <div class="ticket-header">
+                <div class="ticket-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div class="ticket-title">
+                    <h3>Enter Your Voting Ticket</h3>
+                    <p>Your unique seat code (e.g., D13.1, A2.R3.5)</p>
+                </div>
+            </div>
+            <div class="ticket-input-group">
+                <div class="ticket-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="ticketCode" 
+                        class="form-control ticket-input" 
+                        placeholder="D13.1 or A2.R3.5" 
+                        maxlength="10"
+                        autocomplete="off"
+                    >
+                </div>
+                <button id="verifyTicket" class="btn btn-primary btn-lg">
+                    <i class="fas fa-check-circle"></i>
+                    Verify Ticket
+                </button>
+            </div>
+            <div id="ticketStatus" style="display: none;"></div>
+        </div>
+
         <!-- Contestants Section -->
-        <div class="contestants-section">
+        <div class="contestants-section" id="contestantsSection" style="opacity: 0.5; pointer-events: none;">
+            <div class="contestants-header">
+                <h2>Choose Your Favorite Contestant</h2>
+                <p class="lead">Click on a contestant card to select them for voting</p>
+            </div>
             <div id="contestantsGrid" class="contestants-grid">
-                <div class="loading">Loading contestants...</div>
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Loading contestants...</div>
+                </div>
+            </div>
+
+            <!-- Submit Vote Button -->
+            <div class="submit-section" style="display: none;" id="submitSection">
+                <h3 class="mb-3">Ready to Submit Your Vote?</h3>
+                <p class="text-muted mb-4">You have selected: <strong id="selectedContestantName">-</strong></p>
+                <button id="submitVote" class="btn btn-primary submit-button" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                    Submit Vote
+                </button>
             </div>
         </div>
-        
-        <!-- Navigation -->
-        <div class="action-buttons">
-            <a href="/" class="btn btn-secondary">← Back to Home</a>
-        </div>
     </div>
-    
+
     <!-- Success Modal -->
-    <div id="successModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🎉 Vote Submitted Successfully!</h3>
+    <div class="modal-backdrop" id="successBackdrop"></div>
+    <div class="modal" id="successModal">
+        <div class="modal-header">
+            <h3 class="modal-title">Vote Submitted Successfully!</h3>
+        </div>
+        <div class="modal-body text-center">
+            <div style="font-size: 4rem; color: var(--success-color); margin-bottom: var(--spacing-lg);">
+                <i class="fas fa-check-circle"></i>
             </div>
-            <div class="modal-body">
-                <p>Thank you for voting for: <strong id="votedContestant"></strong></p>
-                <p>Your ticket has been used and cannot be used again.</p>
-                <p>Enjoy your wonderful music night!</p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn btn-secondary">Close</button>
-            </div>
+            <h4 class="mb-3">Thank you for voting!</h4>
+            <p>Your vote for <strong id="votedContestantName"></strong> has been recorded.</p>
+            <p class="text-muted">Enjoy the rest of The Vivid Dream event!</p>
+        </div>
+        <div class="modal-footer">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
         </div>
     </div>
-    
+
     <!-- Error Modal -->
-    <div id="errorModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>❌ Error</h3>
-            </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeModal()" class="btn btn-secondary">Close</button>
-            </div>
+    <div class="modal-backdrop" id="errorBackdrop"></div>
+    <div class="modal" id="errorModal">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="fas fa-exclamation-circle text-danger"></i>
+                Error
+            </h3>
+            <button class="modal-close" onclick="closeErrorModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="errorMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeErrorModal()">Close</button>
         </div>
     </div>
-    
+
+    <!-- Scripts -->
     <script>
         // Global variables
         let validTicket = null;
         let contestants = [];
         let selectedContestant = null;
-        
-        // Initialize page
-        window.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
             loadContestants();
             setupEventListeners();
         });
-        
+
         function setupEventListeners() {
             document.getElementById('verifyTicket').addEventListener('click', verifyTicket);
             document.getElementById('ticketCode').addEventListener('keypress', function(e) {
@@ -453,24 +626,26 @@
                     verifyTicket();
                 }
             });
+            // Removed auto-uppercase since ticket codes use mixed case (e.g., A2.R3.5)
+            document.getElementById('submitVote').addEventListener('click', submitVote);
         }
-        
 
-        
         async function verifyTicket() {
-            const ticketCode = document.getElementById('ticketCode').value.trim().toUpperCase();
+            const ticketCode = document.getElementById('ticketCode').value.trim();
             const statusDiv = document.getElementById('ticketStatus');
-            
+            const verifyBtn = document.getElementById('verifyTicket');
+
             if (!ticketCode) {
                 showTicketStatus('Please enter a ticket code', false);
                 return;
             }
-            
-            if (ticketCode.length !== 8) {
-                showTicketStatus('Ticket code must be exactly 8 characters', false);
-                return;
-            }
-            
+
+            // No fixed length validation since ticket codes vary (D13.1, A2.R3.5, etc.)
+
+            // Disable button during verification
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
             try {
                 const response = await fetch('/api/ticket/validate', {
                     method: 'POST',
@@ -479,45 +654,60 @@
                     },
                     body: JSON.stringify({ ticket_code: ticketCode })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok && data.valid) {
                     validTicket = ticketCode;
-                    showTicketStatus('✅ Valid ticket! You can now vote.', true);
+                    showTicketStatus('<i class="fas fa-check-circle"></i> Valid ticket! You can now select a contestant.', true);
                     enableVoting();
+                    updateSteps(2);
                 } else {
-                    showTicketStatus(data.message || 'Invalid ticket or already used', false);
-                    disableVoting();
+                    showTicketStatus('<i class="fas fa-times-circle"></i> ' + (data.message || 'Invalid ticket or already used'), false);
                 }
             } catch (error) {
                 console.error('Error verifying ticket:', error);
-                showTicketStatus('Connection error. Please try again.', false);
-                disableVoting();
+                showTicketStatus('<i class="fas fa-exclamation-triangle"></i> Connection error. Please try again.', false);
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify Ticket';
             }
         }
-        
+
         function showTicketStatus(message, isValid) {
             const statusDiv = document.getElementById('ticketStatus');
-            statusDiv.style.display = 'block';
-            statusDiv.textContent = message;
-            statusDiv.className = isValid ? 'ticket-status ticket-valid' : 'ticket-status ticket-invalid';
+            statusDiv.style.display = 'flex';
+            statusDiv.innerHTML = message;
+            statusDiv.className = isValid ? 'ticket-status valid' : 'ticket-status invalid';
         }
-        
+
         function enableVoting() {
+            const contestantsSection = document.getElementById('contestantsSection');
+            contestantsSection.style.opacity = '1';
+            contestantsSection.style.pointerEvents = 'auto';
+            
+            // Enable vote buttons
             document.querySelectorAll('.vote-button').forEach(btn => {
                 btn.classList.add('enabled');
-                btn.disabled = false;
+                btn.textContent = 'Select This Contestant';
             });
         }
-        
-        function disableVoting() {
-            document.querySelectorAll('.vote-button').forEach(btn => {
-                btn.classList.remove('enabled');
-                btn.disabled = true;
-            });
+
+        function updateSteps(activeStep) {
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                if (i < activeStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (i === activeStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            }
         }
-        
+
         async function loadContestants() {
             try {
                 const response = await fetch('/api/contestants');
@@ -527,112 +717,125 @@
             } catch (error) {
                 console.error('Error loading contestants:', error);
                 document.getElementById('contestantsGrid').innerHTML = 
-                    '<div class="error">Unable to load contestants list</div>';
+                    '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Unable to load contestants. Please refresh the page.</div>';
             }
         }
-        
+
         function renderContestants() {
             const grid = document.getElementById('contestantsGrid');
             
             if (contestants.length === 0) {
-                grid.innerHTML = '<div class="error">No contestants available</div>';
+                grid.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle"></i> No contestants available at this time.</div>';
                 return;
             }
-            
-            grid.innerHTML = contestants.map(contestant => `
-                <div class="contestant-card" data-id="${contestant.id}">
-                    <img src="${contestant.image_url || '/images/default-avatar.svg'}" 
-                         alt="${contestant.name}" class="contestant-image"
-                         onerror="this.src='/images/default-avatar.svg'">
-                    <div class="contestant-name">${contestant.name}</div>
-                    <div class="contestant-description">${contestant.description || 'Talented contestant'}</div>
-                    <button class="vote-button" onclick="selectContestant(${contestant.id})">
-                        Vote for ${contestant.name}
-                    </button>
+
+            grid.innerHTML = contestants.map((contestant, index) => `
+                <div class="contestant-card" data-id="${contestant.id}" onclick="selectContestant(${contestant.id})">
+                    <div class="selection-badge">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <img 
+                        src="${contestant.image_url || '/images/default-avatar.svg'}" 
+                        alt="${contestant.name}" 
+                        class="contestant-image"
+                        onerror="this.src='/images/default-avatar.svg'"
+                    >
+                    <div class="contestant-info">
+                        <span class="contestant-number">Contestant #${index + 1}</span>
+                        <h3 class="contestant-name">${contestant.name}</h3>
+                        <p class="contestant-description">${contestant.description || 'A talented performer ready to showcase their skills'}</p>
+                        <button class="vote-button" onclick="event.stopPropagation(); selectContestant(${contestant.id})">
+                            Select This Contestant
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
-        
+
         function selectContestant(contestantId) {
             if (!validTicket) {
-                showError('Please verify your ticket before voting');
+                showError('Please verify your ticket before selecting a contestant');
                 return;
             }
-            
+
             selectedContestant = contestants.find(c => c.id === contestantId);
             
             if (selectedContestant) {
-                // Highlight selected contestant
+                // Update UI
                 document.querySelectorAll('.contestant-card').forEach(card => {
                     card.classList.remove('selected');
                 });
                 document.querySelector(`[data-id="${contestantId}"]`).classList.add('selected');
                 
-                // Confirm vote
-                if (confirm(`Are you sure you want to vote for "${selectedContestant.name}"?\n\nNote: After voting, you cannot change your vote.`)) {
-                    submitVote();
-                }
+                // Show submit section
+                document.getElementById('submitSection').style.display = 'block';
+                document.getElementById('selectedContestantName').textContent = selectedContestant.name;
+                document.getElementById('submitVote').disabled = false;
+                
+                // Update steps
+                updateSteps(3);
+                
+                // Scroll to submit section
+                document.getElementById('submitSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
-        
+
         async function submitVote() {
             if (!selectedContestant || !validTicket) {
                 showError('Please select a contestant and verify your ticket');
                 return;
             }
-            
+
+            const submitBtn = document.getElementById('submitVote');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
             try {
-                const voteData = {
-                    contestant_id: selectedContestant.id,
-                    ticket_code: validTicket
-                };
-                
                 const response = await fetch('/api/vote', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(voteData)
+                    body: JSON.stringify({
+                        contestant_id: selectedContestant.id,
+                        ticket_code: validTicket
+                    })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Show success modal
-                    document.getElementById('votedContestant').textContent = selectedContestant.name;
-                    document.getElementById('successModal').classList.remove('hidden');
-                    
-                    // Disable further voting
-                    disableVoting();
-                    document.getElementById('ticketCode').disabled = true;
-                    document.getElementById('verifyTicket').disabled = true;
-                    
+                    document.getElementById('votedContestantName').textContent = selectedContestant.name;
+                    showSuccessModal();
                 } else {
-                    showError(data.error || 'Unable to vote. Please try again.');
+                    showError(data.error || 'Unable to submit vote. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vote';
                 }
             } catch (error) {
                 console.error('Error submitting vote:', error);
                 showError('Connection error. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Vote';
             }
         }
-        
+
+        function showSuccessModal() {
+            document.getElementById('successBackdrop').classList.add('show');
+            document.getElementById('successModal').classList.add('show');
+        }
+
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorModal').classList.remove('hidden');
+            document.getElementById('errorBackdrop').classList.add('show');
+            document.getElementById('errorModal').classList.add('show');
         }
-        
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.classList.add('hidden');
-            });
+
+        function closeErrorModal() {
+            document.getElementById('errorBackdrop').classList.remove('show');
+            document.getElementById('errorModal').classList.remove('show');
         }
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
-                closeModal();
-            }
-        });
     </script>
 </body>
 </html>
