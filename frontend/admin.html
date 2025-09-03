@@ -1034,8 +1034,26 @@
         }
 
         async function resetVoting() {
-            // Implementation for resetting voting
-            alert('Voting data reset (not implemented in this demo)');
+            try {
+                const response = await fetch('/api/admin/reset-voting', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Success: ${data.message}`);
+                    // Refresh all data after reset
+                    loadDashboardData();
+                    loadTicketStats();
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error resetting voting:', error);
+                alert('Failed to reset voting data');
+            }
         }
 
         // Export functions
