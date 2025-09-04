@@ -261,6 +261,31 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
+        /* Hero Credit */
+        .hero-credit {
+            text-align: center;
+            margin-top: var(--spacing-2xl);
+            animation: fadeIn 1s ease-out 1s both;
+        }
+
+        .hero-credit p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .hero-credit .uavs-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-base);
+        }
+
+        .hero-credit .uavs-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero {
@@ -336,6 +361,11 @@
                     <div class="stat-number" id="timeLeft">--:--</div>
                     <div class="stat-label">Until End of Event</div>
                 </div>
+            </div>
+            
+            <!-- Developer Credit -->
+            <div class="hero-credit">
+                <p>This website is developed by <a href="#" class="uavs-link">UAVS - The United Associations of Vietnamese Students in NSW</a></p>
             </div>
         </div>
     </section>
