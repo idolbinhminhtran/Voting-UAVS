@@ -360,65 +360,6 @@
             text-align: center;
         }
 
-        /* Danger Zone */
-        .danger-zone {
-            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-            border: 2px solid var(--danger-color);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-2xl);
-            margin-top: var(--spacing-3xl);
-            position: relative;
-        }
-
-        .danger-zone::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: repeating-linear-gradient(
-                45deg,
-                var(--danger-color),
-                var(--danger-color) 10px,
-                transparent 10px,
-                transparent 20px
-            );
-        }
-
-        .danger-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .danger-icon {
-            font-size: 2rem;
-            color: var(--danger-color);
-        }
-
-        .danger-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--danger-color);
-            margin: 0;
-        }
-
-        .danger-description {
-            color: var(--gray-700);
-            margin-bottom: var(--spacing-xl);
-            background: white;
-            padding: var(--spacing-md);
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--warning-color);
-        }
-
-        .danger-actions {
-            display: flex;
-            gap: var(--spacing-md);
-            flex-wrap: wrap;
-        }
 
         /* Ticket Stats */
         .ticket-grid {
@@ -734,24 +675,6 @@
                 </div>
             </div>
 
-            <!-- Danger Zone -->
-            <div class="danger-zone">
-                <div class="danger-header">
-                    <i class="fas fa-exclamation-triangle danger-icon"></i>
-                    <h2 class="danger-title">Danger Zone</h2>
-                </div>
-                <p class="danger-description">
-                    <i class="fas fa-warning"></i> 
-                    <strong>Warning:</strong> These actions are irreversible and will permanently affect the voting system. 
-                    Please ensure you have proper backups before proceeding.
-                </p>
-                <div class="danger-actions">
-                    <button class="btn btn-danger" onclick="confirmResetVoting()">
-                        <i class="fas fa-trash-alt"></i>
-                        Reset All Voting Data
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1004,37 +927,6 @@
             document.getElementById('confirmModal').classList.remove('show');
         }
 
-        // Danger zone actions
-        function confirmResetVoting() {
-            showConfirmModal(
-                'Reset All Voting Data',
-                'Are you sure you want to reset all voting data? This will delete all votes and cannot be undone.',
-                resetVoting
-            );
-        }
-
-        async function resetVoting() {
-            try {
-                const response = await fetch('/api/admin/reset-voting', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert(`Success: ${data.message}`);
-                    // Refresh all data after reset
-                    loadDashboardData();
-                    loadTicketStats();
-                } else {
-                    alert(`Error: ${data.error}`);
-                }
-            } catch (error) {
-                console.error('Error resetting voting:', error);
-                alert('Failed to reset voting data');
-            }
-        }
 
         // Export functions
         function exportData(type) {
