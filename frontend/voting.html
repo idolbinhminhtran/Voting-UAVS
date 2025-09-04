@@ -426,10 +426,22 @@
                 flex-direction: column;
                 gap: var(--spacing-lg);
                 padding: var(--spacing-lg);
+                align-items: flex-start; /* left align items on mobile */
+                width: 100%;
             }
 
             .step::after {
                 display: none;
+            }
+
+            /* Make each step full width and left-aligned on mobile */
+            .step {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .step-text {
+                text-align: left;
             }
 
             .ticket-input-group {
