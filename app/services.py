@@ -15,20 +15,31 @@ class VotingService:
         """
         try:
             # Normalize ticket code to be tolerant of spaces/case
-            from .predefined_tickets import normalize_ticket_code
+            from .predefined_tickets import normalize_ticket_code, PREDEFINED_TICKETS
             normalized_code = normalize_ticket_code(ticket_code)
+            
+            # Find the original ticket code format
+            original_code = None
+            for original in PREDEFINED_TICKETS:
+                if normalize_ticket_code(original) == normalized_code:
+                    original_code = original
+                    break
+            
+            if not original_code:
+                return {'success': False, 'error': 'Invalid ticket code'}
+            
             # Use the submit_vote function for Supabase
             result = db_adapter.execute_function('submit_vote', 
-                [normalized_code, contestant_id, ip_address, user_agent])
+                [original_code, contestant_id, ip_address, user_agent])
             
             if result and len(result) > 0:
                 row = result[0]
                 if row['success']:
-                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {normalized_code}")
+                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {original_code}")
                     return {
                         'success': True,
                         'contestant_name': row['contestant_name'],
-                        'ticket_code': normalized_code,
+                        'ticket_code': original_code,
                         'vote_id': row['vote_id']
                     }
                 else:
