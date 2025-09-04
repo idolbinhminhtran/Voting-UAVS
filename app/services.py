@@ -87,3 +87,27 @@ class VotingService:
         except Exception as e:
             logger.error(f"Error resetting voting: {str(e)}")
             return False
+
+    @staticmethod
+    def reseed_predefined_tickets_only():
+        """Wipe votes and tickets, then seed only predefined tickets."""
+        try:
+            from .predefined_tickets import get_predefined_tickets
+            # Start by clearing dependent table
+            db_adapter.execute_query('DELETE FROM votes')
+            # Clear tickets table entirely
+            db_adapter.execute_query('DELETE FROM tickets')
+
+            predefined = get_predefined_tickets()
+            inserted = 0
+            for code in predefined:
+                db_adapter.execute_query(
+                    "INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW())",
+                    (code,)
+                )
+                inserted += 1
+            logger.info(f"Reseeded {inserted} predefined tickets")
+            return {"success": True, "inserted": inserted}
+        except Exception as e:
+            logger.error(f"Error reseeding tickets: {str(e)}")
+            return {"success": False, "error": str(e)}

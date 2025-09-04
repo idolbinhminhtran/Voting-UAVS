@@ -143,6 +143,22 @@ def sync_predefined_tickets():
         
     except Exception as e:
         return jsonify({'error': 'Failed to sync pre-defined tickets'}), 500
+@api_bp.route('/admin/reseed-predefined', methods=['POST'])
+@require_admin
+def reseed_predefined():
+    """Dangerous: wipe votes and tickets, then load predefined tickets only"""
+    try:
+        from .services import VotingService
+        result = VotingService.reseed_predefined_tickets_only()
+        if result.get('success'):
+            return jsonify({
+                'success': True,
+                'message': f"Database cleared and {result.get('inserted', 0)} predefined tickets inserted"
+            }), 200
+        else:
+            return jsonify({'error': result.get('error', 'Unknown error')}), 500
+    except Exception as e:
+        return jsonify({'error': 'Failed to reseed predefined tickets'}), 500
 
 # Removed seating system endpoints - tickets are now based on pre-defined seat codes
 
