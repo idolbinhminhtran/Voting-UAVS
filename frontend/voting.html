@@ -360,12 +360,6 @@
             color: var(--gray-900);
         }
 
-        .contestant-description {
-            color: var(--gray-600);
-            line-height: 1.6;
-            margin-bottom: var(--spacing-lg);
-            flex: 1;
-        }
 
         .vote-button {
             width: 100%;
@@ -743,7 +737,6 @@
                     <div class="contestant-info">
                         <span class="contestant-number">Contestant #${index + 1}</span>
                         <h3 class="contestant-name">${contestant.name}</h3>
-                        <p class="contestant-description">${contestant.description || 'A talented performer ready to showcase their skills'}</p>
                         <button class="vote-button" onclick="event.stopPropagation(); selectContestant(${contestant.id})">
                             Select This Contestant
                         </button>

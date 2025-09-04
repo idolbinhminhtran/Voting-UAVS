@@ -242,7 +242,6 @@ function displayContestants(contestants) {
                  alt="${contestant.name}" 
                  onerror="this.style.display='none'">
             <h4>${contestant.name}</h4>
-            <p>${contestant.description || 'No description available'}</p>
         </div>
     `).join('');
 }
