@@ -14,18 +14,21 @@ class VotingService:
         Returns: dict with 'success' boolean and additional info
         """
         try:
+            # Normalize ticket code to be tolerant of spaces/case
+            from .predefined_tickets import normalize_ticket_code
+            normalized_code = normalize_ticket_code(ticket_code)
             # Use the submit_vote function for Supabase
             result = db_adapter.execute_function('submit_vote', 
-                [ticket_code, contestant_id, ip_address, user_agent])
+                [normalized_code, contestant_id, ip_address, user_agent])
             
             if result and len(result) > 0:
                 row = result[0]
                 if row['success']:
-                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {ticket_code}")
+                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {normalized_code}")
                     return {
                         'success': True,
                         'contestant_name': row['contestant_name'],
-                        'ticket_code': ticket_code,
+                        'ticket_code': normalized_code,
                         'vote_id': row['vote_id']
                     }
                 else:

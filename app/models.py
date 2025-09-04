@@ -49,15 +49,18 @@ class Ticket:
     @staticmethod
     def get_by_code(ticket_code):
         """Get ticket by code - uses pre-defined tickets system"""
-        from .predefined_tickets import is_valid_ticket_code
+        from .predefined_tickets import is_valid_ticket_code, normalize_ticket_code
         
         # First check if it's a valid pre-defined ticket
         if not is_valid_ticket_code(ticket_code):
             return None
         
+        # Normalize to canonical form for storage/lookup
+        normalized_code = normalize_ticket_code(ticket_code)
+
         # Check if ticket exists in database and get its usage status
         query = 'SELECT * FROM tickets WHERE ticket_code = %s'
-        ticket = db_adapter.execute_query(query, (ticket_code,), fetch_one=True)
+        ticket = db_adapter.execute_query(query, (normalized_code,), fetch_one=True)
         
         if ticket:
             return Ticket(**dict(ticket))
@@ -65,7 +68,7 @@ class Ticket:
             # If ticket doesn't exist in database but is pre-defined, create it as unused
             from datetime import datetime
             insert_query = 'INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW()) RETURNING *'
-            new_ticket = db_adapter.execute_query(insert_query, (ticket_code,), fetch_one=True)
+            new_ticket = db_adapter.execute_query(insert_query, (normalized_code,), fetch_one=True)
             return Ticket(**dict(new_ticket)) if new_ticket else None
     
     def mark_as_used(self):

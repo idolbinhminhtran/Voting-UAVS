@@ -32,10 +32,20 @@ def get_predefined_tickets():
     return PREDEFINED_TICKETS.copy()
 
 def is_valid_ticket_code(ticket_code):
-    """Check if a ticket code is in the pre-defined list"""
-    # Exact match required (case sensitive)
-    return ticket_code in PREDEFINED_TICKETS
+    """Check if a ticket code is in the pre-defined list.
+    The check is case-insensitive and ignores whitespace in the code.
+    """
+    return normalize_ticket_code(ticket_code) in PREDEFINED_TICKETS_NORMALIZED
 
 def get_ticket_count():
     """Get the total number of pre-defined tickets"""
     return len(PREDEFINED_TICKETS)
+
+# Normalization helpers (case-insensitive, ignore spaces)
+PREDEFINED_TICKETS_NORMALIZED = {code.upper() for code in PREDEFINED_TICKETS}
+
+def normalize_ticket_code(ticket_code: str) -> str:
+    """Normalize a ticket code by removing spaces and uppercasing."""
+    if not ticket_code:
+        return ""
+    return ticket_code.replace(" ", "").upper()
