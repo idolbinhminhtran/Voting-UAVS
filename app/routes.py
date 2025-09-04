@@ -113,52 +113,28 @@ def reset_voting():
     except Exception as e:
         return jsonify({'error': 'Failed to reset voting'}), 500
 
-@api_bp.route('/admin/sync-predefined-tickets', methods=['POST'])
+@api_bp.route('/admin/generate-tickets', methods=['POST'])
 @require_admin
-def sync_predefined_tickets():
-    """Sync pre-defined tickets to database"""
+def generate_tickets():
+    """Generate new tickets in database"""
     try:
-        from .predefined_tickets import get_predefined_tickets
-        from .database import db_adapter
+        data = request.get_json() or {}
+        count = int(data.get('count', 100))
         
-        predefined_tickets = get_predefined_tickets()
-        synced_count = 0
-        
-        # Insert pre-defined tickets into database if they don't exist
-        for ticket_code in predefined_tickets:
-            result = db_adapter.execute_query(
-                "INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW()) ON CONFLICT (ticket_code) DO NOTHING RETURNING ticket_code",
-                (ticket_code,),
-                fetch_one=True
-            )
-            if result:
-                synced_count += 1
-        
-        return jsonify({
-            'success': True, 
-            'message': f'Synced {synced_count} pre-defined tickets to database',
-            'total_predefined': len(predefined_tickets),
-            'newly_synced': synced_count
-        }), 200
-        
-    except Exception as e:
-        return jsonify({'error': 'Failed to sync pre-defined tickets'}), 500
-@api_bp.route('/admin/reseed-predefined', methods=['POST'])
-@require_admin
-def reseed_predefined():
-    """Dangerous: wipe votes and tickets, then load predefined tickets only"""
-    try:
         from .services import VotingService
-        result = VotingService.reseed_predefined_tickets_only()
+        result = VotingService.generate_tickets(count)
+        
         if result.get('success'):
             return jsonify({
-                'success': True,
-                'message': f"Database cleared and {result.get('inserted', 0)} predefined tickets inserted"
+                'success': True, 
+                'message': f'Generated {result.get("inserted", 0)} new tickets',
+                'count': result.get('inserted', 0)
             }), 200
         else:
-            return jsonify({'error': result.get('error', 'Unknown error')}), 500
+            return jsonify({'error': result.get('error', 'Failed to generate tickets')}), 500
+        
     except Exception as e:
-        return jsonify({'error': 'Failed to reseed predefined tickets'}), 500
+        return jsonify({'error': 'Failed to generate tickets'}), 500
 
 @api_bp.route('/admin/clear-tickets', methods=['POST'])
 @require_admin

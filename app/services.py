@@ -14,32 +14,18 @@ class VotingService:
         Returns: dict with 'success' boolean and additional info
         """
         try:
-            # Normalize ticket code to be tolerant of spaces/case
-            from .predefined_tickets import normalize_ticket_code, PREDEFINED_TICKETS
-            normalized_code = normalize_ticket_code(ticket_code)
-            
-            # Find the original ticket code format
-            original_code = None
-            for original in PREDEFINED_TICKETS:
-                if normalize_ticket_code(original) == normalized_code:
-                    original_code = original
-                    break
-            
-            if not original_code:
-                return {'success': False, 'error': 'Invalid ticket code'}
-            
             # Use the submit_vote function for Supabase
             result = db_adapter.execute_function('submit_vote', 
-                [original_code, contestant_id, ip_address, user_agent])
+                [ticket_code.strip(), contestant_id, ip_address, user_agent])
             
             if result and len(result) > 0:
                 row = result[0]
                 if row['success']:
-                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {original_code}")
+                    logger.info(f"Vote submitted successfully: Contestant {row['contestant_name']}, Ticket {ticket_code.strip()}")
                     return {
                         'success': True,
                         'contestant_name': row['contestant_name'],
-                        'ticket_code': original_code,
+                        'ticket_code': ticket_code.strip(),
                         'vote_id': row['vote_id']
                     }
                 else:
@@ -89,27 +75,35 @@ class VotingService:
             return False
 
     @staticmethod
-    def reseed_predefined_tickets_only():
-        """Wipe votes and tickets, then seed only predefined tickets."""
+    def generate_tickets(count=100):
+        """Generate new tickets directly in database."""
         try:
-            from .predefined_tickets import get_predefined_tickets
+            import string
+            import random
+            
             # Start by clearing dependent table
             db_adapter.execute_query('DELETE FROM votes')
             # Clear tickets table entirely
             db_adapter.execute_query('DELETE FROM tickets')
 
-            predefined = get_predefined_tickets()
             inserted = 0
-            for code in predefined:
-                db_adapter.execute_query(
-                    "INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW())",
-                    (code,)
-                )
-                inserted += 1
-            logger.info(f"Reseeded {inserted} predefined tickets")
+            for i in range(count):
+                # Generate a random ticket code (8 characters)
+                ticket_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+                try:
+                    db_adapter.execute_query(
+                        "INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW())",
+                        (ticket_code,)
+                    )
+                    inserted += 1
+                except Exception:
+                    # If duplicate, try again with different code
+                    continue
+                    
+            logger.info(f"Generated {inserted} new tickets")
             return {"success": True, "inserted": inserted}
         except Exception as e:
-            logger.error(f"Error reseeding tickets: {str(e)}")
+            logger.error(f"Error generating tickets: {str(e)}")
             return {"success": False, "error": str(e)}
 
     @staticmethod

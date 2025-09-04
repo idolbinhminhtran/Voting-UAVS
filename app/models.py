@@ -48,36 +48,18 @@ class Ticket:
     
     @staticmethod
     def get_by_code(ticket_code):
-        """Get ticket by code - uses pre-defined tickets system"""
-        from .predefined_tickets import is_valid_ticket_code, normalize_ticket_code, PREDEFINED_TICKETS
-        
-        # First check if it's a valid pre-defined ticket
-        if not is_valid_ticket_code(ticket_code):
+        """Get ticket by code - checks only database"""
+        if not ticket_code or not ticket_code.strip():
             return None
         
-        # Find the original ticket code format from predefined list
-        normalized_code = normalize_ticket_code(ticket_code)
-        original_code = None
-        for original in PREDEFINED_TICKETS:
-            if normalize_ticket_code(original) == normalized_code:
-                original_code = original
-                break
-        
-        if not original_code:
-            return None
-
         # Check if ticket exists in database and get its usage status
         query = 'SELECT * FROM tickets WHERE ticket_code = %s'
-        ticket = db_adapter.execute_query(query, (original_code,), fetch_one=True)
+        ticket = db_adapter.execute_query(query, (ticket_code.strip(),), fetch_one=True)
         
         if ticket:
             return Ticket(**dict(ticket))
         else:
-            # If ticket doesn't exist in database but is pre-defined, create it as unused
-            from datetime import datetime
-            insert_query = 'INSERT INTO tickets (ticket_code, is_used, created_at) VALUES (%s, FALSE, NOW()) RETURNING *'
-            new_ticket = db_adapter.execute_query(insert_query, (original_code,), fetch_one=True)
-            return Ticket(**dict(new_ticket)) if new_ticket else None
+            return None
     
     def mark_as_used(self):
         """Mark ticket as used"""
@@ -168,10 +150,7 @@ def get_voting_results():
     return formatted_results, total_votes
 
 def get_ticket_stats():
-    """Get ticket statistics based on pre-defined tickets"""
-    from .predefined_tickets import get_predefined_tickets, get_ticket_count
-    
-    # Get stats from database for tickets that have been used
+    """Get ticket statistics from database only"""
     try:
         # Try to use the ticket_stats view first
         query = 'SELECT * FROM ticket_stats'
@@ -200,16 +179,14 @@ def get_ticket_stats():
         db_used = db_stats['used_tickets'] or 0
         db_total = db_stats['total_in_db'] or 0
     
-    total_predefined = get_ticket_count()
     used_tickets = db_used
-    unused_tickets = total_predefined - used_tickets
-    usage_percentage = (used_tickets / total_predefined * 100) if total_predefined > 0 else 0
+    unused_tickets = db_total - used_tickets
+    usage_percentage = (used_tickets / db_total * 100) if db_total > 0 else 0
     
     return {
-        'total_tickets': total_predefined,
+        'total_tickets': db_total,
         'used_tickets': used_tickets,
         'unused_tickets': unused_tickets,
         'usage_percentage': round(usage_percentage, 2),
-        'predefined_count': total_predefined,
         'synced_to_db': db_total
     }
