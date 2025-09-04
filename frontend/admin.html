@@ -184,6 +184,10 @@
             color: var(--danger-color);
         }
 
+        .stat-change.neutral {
+            color: var(--gray-500);
+        }
+
         /* Chart Container */
         .chart-container {
             background: white;
@@ -563,9 +567,9 @@
                     </div>
                     <div class="stat-value" id="totalTickets">-</div>
                     <div class="stat-label">Total Tickets</div>
-                    <div class="stat-change positive">
+                    <div class="stat-change positive" id="ticketStatus">
                         <i class="fas fa-arrow-up"></i>
-                        <span>100% Generated</span>
+                        <span>Loading...</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -585,9 +589,9 @@
                     </div>
                     <div class="stat-value" id="totalVotes">-</div>
                     <div class="stat-label">Total Votes</div>
-                    <div class="stat-change positive">
+                    <div class="stat-change positive" id="voteStatus">
                         <i class="fas fa-users"></i>
-                        <span>Active Voting</span>
+                        <span>Loading...</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -596,9 +600,9 @@
                     </div>
                     <div class="stat-value" id="votingStatus">OPEN</div>
                     <div class="stat-label">Voting Status</div>
-                    <div class="stat-change positive">
+                    <div class="stat-change positive" id="votingStatusIndicator">
                         <i class="fas fa-circle"></i>
-                        <span>Live Now</span>
+                        <span>Loading...</span>
                     </div>
                 </div>
             </div>
@@ -857,13 +861,41 @@
                 document.getElementById('usageRate').innerHTML = 
                     `<i class="fas fa-chart-line"></i> <span>${usageRate}% Usage Rate</span>`;
                 
+                // Update ticket status
+                const predefinedCount = tickets.total_tickets || 0;
+                const syncedCount = tickets.synced_to_db || 0;
+                if (syncedCount > 0) {
+                    document.getElementById('ticketStatus').innerHTML = 
+                        `<i class="fas fa-check-circle"></i> <span>${syncedCount} Synced</span>`;
+                    document.getElementById('ticketStatus').className = 'stat-change positive';
+                } else {
+                    document.getElementById('ticketStatus').innerHTML = 
+                        `<i class="fas fa-exclamation-triangle"></i> <span>Not Synced</span>`;
+                    document.getElementById('ticketStatus').className = 'stat-change negative';
+                }
+                
+                // Update vote status
+                const totalVotes = results.total_votes || 0;
+                if (totalVotes > 0) {
+                    document.getElementById('voteStatus').innerHTML = 
+                        `<i class="fas fa-users"></i> <span>${totalVotes} Votes Cast</span>`;
+                    document.getElementById('voteStatus').className = 'stat-change positive';
+                } else {
+                    document.getElementById('voteStatus').innerHTML = 
+                        `<i class="fas fa-clock"></i> <span>No Votes Yet</span>`;
+                    document.getElementById('voteStatus').className = 'stat-change neutral';
+                }
+                
                 // Update voting status style
                 const statusElement = document.querySelector('#votingStatus').parentElement;
                 if (results.voting_open) {
                     statusElement.querySelector('.stat-change').className = 'stat-change positive';
+                    document.getElementById('votingStatusIndicator').innerHTML = 
+                        `<i class="fas fa-circle"></i> <span>Live Now</span>`;
                 } else {
                     statusElement.querySelector('.stat-change').className = 'stat-change negative';
-                    statusElement.querySelector('.stat-change span').textContent = 'Closed';
+                    document.getElementById('votingStatusIndicator').innerHTML = 
+                        `<i class="fas fa-circle"></i> <span>Closed</span>`;
                 }
                 
             } catch (error) {

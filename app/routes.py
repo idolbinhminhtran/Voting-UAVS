@@ -160,6 +160,20 @@ def reseed_predefined():
     except Exception as e:
         return jsonify({'error': 'Failed to reseed predefined tickets'}), 500
 
+@api_bp.route('/admin/clear-tickets', methods=['POST'])
+@require_admin
+def clear_tickets():
+    """Dangerous: delete all records in tickets and votes"""
+    try:
+        from .services import VotingService
+        result = VotingService.clear_all_tickets()
+        if result.get('success'):
+            return jsonify({'success': True, 'message': 'All tickets (and votes) deleted'}), 200
+        else:
+            return jsonify({'error': result.get('error', 'Unknown error')}), 500
+    except Exception:
+        return jsonify({'error': 'Failed to clear tickets'}), 500
+
 # Removed seating system endpoints - tickets are now based on pre-defined seat codes
 
 @api_bp.route('/vote', methods=['POST'])

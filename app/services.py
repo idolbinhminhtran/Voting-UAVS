@@ -111,3 +111,15 @@ class VotingService:
         except Exception as e:
             logger.error(f"Error reseeding tickets: {str(e)}")
             return {"success": False, "error": str(e)}
+
+    @staticmethod
+    def clear_all_tickets():
+        """Delete all records in tickets (and dependent votes)."""
+        try:
+            db_adapter.execute_query('DELETE FROM votes')
+            db_adapter.execute_query('DELETE FROM tickets')
+            logger.info("All tickets cleared")
+            return {"success": True}
+        except Exception as e:
+            logger.error(f"Error clearing tickets: {str(e)}")
+            return {"success": False, "error": str(e)}
